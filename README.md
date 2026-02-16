@@ -67,7 +67,7 @@ This work builds on contributions from: **Shlok Khemani** (memory tool schemas, 
 
 ## Author
 
-**Francesco Marinoni Moretto** — AI Practice & Community Lead, [N1AI](https://n1.ai)
+**Francesco Marinoni Moretto** — AI Practice & Community Lead, [N1AI](https://www.n1ai.co)
 
 - LinkedIn: [linkedin.com/in/francesco-moretto](https://www.linkedin.com/in/francesco-moretto)
 - GitHub: [github.com/frmoretto](https://github.com/frmoretto)
