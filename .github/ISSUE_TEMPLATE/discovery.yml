@@ -1,0 +1,65 @@
+name: "🔍 New Tool Discovery"
+description: Report a newly discovered tool or capability
+title: "[Discovery] "
+labels: ["discovery"]
+body:
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: The internal tool name (e.g., `reminder_create_v0`)
+      placeholder: tool_name_v0
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where did you discover this?
+      multiple: true
+      options:
+        - Browser (claude.ai)
+        - Desktop App (macOS)
+        - Desktop App (Windows)
+        - Mobile App (Android)
+        - Mobile App (iOS)
+    validations:
+      required: true
+  - type: dropdown
+    id: discovery-method
+    attributes:
+      label: Discovery Method
+      options:
+        - tool_search query
+        - System prompt extraction
+        - Behavioral observation
+        - Error message / stack trace
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: schema
+    attributes:
+      label: Parameter Schema
+      description: JSON schema if available (from tool_search results or system prompt)
+      render: json
+  - type: textarea
+    id: response
+    attributes:
+      label: Response Example
+      description: A real response from calling the tool
+      render: json
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed Behavior
+      description: What does the tool do? Any gotchas, edge cases, or platform differences?
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date of Discovery
+      placeholder: "2026-02-16"
+    validations:
+      required: true

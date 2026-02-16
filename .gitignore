@@ -1,0 +1,25 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temp files
+*.tmp
+*.bak
+*.orig
+
+# Build artifacts
+__pycache__/
+node_modules/
+*.pyc
+
+# Draft versions (keep only release versions in repo)
+*_draft*
+*_WIP*

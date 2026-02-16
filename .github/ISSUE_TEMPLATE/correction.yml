@@ -1,0 +1,47 @@
+name: "🐛 Correction"
+description: Report an error or outdated information in the book
+title: "[Correction] "
+labels: ["correction"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Location in Book
+      description: Which chapter, tool card, or section?
+      placeholder: "e.g., Tool Card 5 (message_compose_v1), Chapter 7"
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What the Book Currently Says
+      description: Quote or paraphrase the incorrect/outdated content
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What You Observed Instead
+      description: Describe the correct behavior with evidence
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform Tested On
+      multiple: true
+      options:
+        - Browser (claude.ai)
+        - Desktop App (macOS)
+        - Desktop App (Windows)
+        - Mobile App (Android)
+        - Mobile App (iOS)
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date of Observation
+      placeholder: "2026-02-16"
+    validations:
+      required: true

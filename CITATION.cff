@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you reference this work, please cite it as below."
+title: "Claude's Hidden Toolkit: The Definitive Guide to Claude.ai's Undocumented Internal Tools"
+type: software
+authors:
+  - family-names: "Marinoni Moretto"
+    given-names: "Francesco"
+    orcid: ""
+version: "1.3"
+date-released: "2026-02-16"
+url: "https://github.com/n1-ai/claude-hidden-toolkit"
+license: "CC-BY-4.0"
+keywords:
+  - claude
+  - anthropic
+  - ai-tools
+  - reverse-engineering
+  - internal-tools
+  - tool-use
+  - model-context-protocol
+  - claude-ai
+abstract: >-
+  Comprehensive reverse-engineering documentation of 28 undocumented internal
+  tools in Claude.ai's consumer interfaces (browser, desktop app, mobile app).
+  Covers complete parameter schemas, confirmed response formats, platform-specific
+  behavior differences, and a three-tier tool loading architecture across three
+  client surfaces. Based on 35+ manual tests with empirical verification.

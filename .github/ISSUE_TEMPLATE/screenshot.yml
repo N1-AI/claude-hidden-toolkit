@@ -1,0 +1,48 @@
+name: "📸 Screenshot Contribution"
+description: Submit a screenshot for one of the 22 [Upcoming] figures
+title: "[Screenshot] fig_XX — "
+labels: ["screenshot"]
+body:
+  - type: input
+    id: figure
+    attributes:
+      label: Figure Number
+      description: Which figure are you providing? (fig_01 through fig_22)
+      placeholder: "fig_07"
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform Captured On
+      options:
+        - Browser (claude.ai)
+        - Desktop App (macOS)
+        - Desktop App (Windows)
+        - Mobile App (Android)
+        - Mobile App (iOS)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What's Shown
+      description: Brief description of what the screenshot captures
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag and drop your screenshot here. Please blur any personal information.
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy Check
+      options:
+        - label: I have blurred or removed all personal information from this screenshot
+          required: true
+        - label: I consent to this image being used in the book under CC BY 4.0
+          required: true
