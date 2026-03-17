@@ -6,8 +6,8 @@ authors:
   - family-names: "Marinoni Moretto"
     given-names: "Francesco"
     orcid: ""
-version: "1.3"
-date-released: "2026-02-16"
+version: "1.4"
+date-released: "2026-03-17"
 url: "https://github.com/n1-ai/claude-hidden-toolkit"
 license: "CC-BY-4.0"
 keywords:
@@ -19,9 +19,14 @@ keywords:
   - tool-use
   - model-context-protocol
   - claude-ai
+  - artifact-api
+  - ios-reminders
 abstract: >-
-  Comprehensive reverse-engineering documentation of 28 undocumented internal
-  tools in Claude.ai's consumer interfaces (browser, desktop app, mobile app).
+  Comprehensive reverse-engineering documentation of 37 undocumented internal
+  tools in Claude.ai's consumer interfaces (browser, desktop app, Android, iOS).
   Covers complete parameter schemas, confirmed response formats, platform-specific
-  behavior differences, and a three-tier tool loading architecture across three
-  client surfaces. Based on 35+ manual tests with empirical verification.
+  behavior differences, a three-tier tool loading architecture across four client
+  surfaces, the artifact execution layer (Claude-inside-Claude API calls, session-scoped
+  storage, MCP endpoint access), and MCP connector state as an architectural variable.
+  Based on 50+ manual tests with empirical verification across all platforms. Edition 1.4
+  includes contributions from two external researchers.

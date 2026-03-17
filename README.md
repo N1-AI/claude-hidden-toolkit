@@ -2,17 +2,17 @@
 
 **The Definitive Guide to Claude.ai's Undocumented Internal Tools**
 
-*28 tools. Zero official documentation. Fully reverse-engineered.*
+*37 tools. Zero official documentation. Fully reverse-engineered.*
 
 ---
 
 ## What Is This?
 
-Claude.ai ships with 28+ internal tools — capabilities that let Claude check the time, search your calendar, render interactive charts, draft emails with native app integration, find nearby restaurants, display them on a map, set alarms on your phone, and more.
+Claude.ai ships with 37+ internal tools — capabilities that let Claude check the time, search your calendar, render interactive charts, draft emails directly into your Gmail, find nearby restaurants, display them on a map, set alarms on your phone, manage iOS Reminders, build AI-powered artifacts that call Claude from within Claude, and more.
 
 **Almost none of this is documented.**
 
-Anthropic's official docs cover the API. But the consumer product — claude.ai — has a rich, evolving toolkit that exists in a documentation void. This book fills that gap through systematic reverse-engineering across three platforms (browser, desktop app, mobile app).
+Anthropic's official docs cover the API. But the consumer product — claude.ai — has a rich, evolving toolkit that exists in a documentation void. This book fills that gap through systematic reverse-engineering across four platforms (browser, desktop app, Android, iOS).
 
 ## Key Discoveries
 
@@ -20,40 +20,53 @@ Anthropic's official docs cover the API. But the consumer product — claude.ai 
 
 | Platform | Always-Loaded | tool_search | Deferred Tools |
 |----------|:---:|:---:|:---:|
-| Browser (claude.ai) | 21 | ❌ | None |
+| Browser (claude.ai) | 21 | MCP only (when connectors active) | None |
 | Desktop App | 22 | MCP only | 32 (Chrome + Filesystem) |
-| Mobile App | 20 | Consumer | 11 (alarm, timer, calendar, etc.) |
+| Mobile (Android) | 22 | Consumer | 11 (alarm, timer, calendar, etc.) |
+| Mobile (iOS) | 22 | Consumer | 16 (Android set + 5 Reminders tools) |
 
-**Every response format has been empirically confirmed** — no inferred schemas remain in Edition 1.3.
+**MCP connector state changes the tool inventory.** Connecting Gmail or Google Calendar adds tools to the always-loaded pool. Disconnecting removes them. This is a new architectural variable documented in v1.4.
+
+**The artifact execution layer.** Claude artifacts can make authenticated API calls back to Claude itself — Claude-inside-Claude — without API keys. The runtime injects authentication. This, along with session-scoped storage and MCP endpoint access, means artifacts are evolving into a lightweight application platform.
+
+**Every response format has been empirically confirmed** — no inferred schemas remain.
 
 ## What's Inside
 
 | Chapter | Coverage |
 |---------|----------|
-| 1–2 | Architecture: two-tier loading, platform inventory, versioning |
+| 1–2 | Architecture: two-tier loading, platform inventory, MCP connector state, versioning |
 | 3 | Context tools: `user_time_v0`, `user_location_v0` |
 | 4 | Interaction widgets: `ask_user_input_v0`, `message_compose_v1` |
-| 5 | Inline charts: `chart_display_v0` |
+| 5 | Inline charts: `chart_display_v0`, `visualize:show_widget` |
 | 6 | Calendar & device: 6 calendar tools + alarms + timers |
 | 7 | Search & data: web, images, places, maps, sports, Drive, weather, recipes |
 | 8 | Memory: `memory_user_edits`, `conversation_search`, `recent_chats` |
-| 9 | Computer use: bash, files, artifacts, the skill system |
+| 9 | Computer use: bash, files, artifacts, the skill system, artifact execution layer |
 | 10 | The meta-tool: `tool_search` and enumeration methodology |
 | 11 | Complete tool reference index |
-| 12 | MCP convergence and what comes next |
-| Annex | 28 detailed tool cards with confirmed JSON schemas |
+| 12 | Ghost tools, MCP convergence, and what comes next |
+| Annex | 37 detailed tool cards with confirmed JSON schemas |
 
 ## Read the Book
 
-- **[Claude_Hidden_Toolkit.md](Claude_Hidden_Toolkit.md)** — Full book, Markdown (~21,600 words)
+- **[Claude_Hidden_Toolkit.md](Claude_Hidden_Toolkit.md)** — Full book, Markdown (~25,000 words)
 
 ## Edition History
 
 | Edition | Date | Changes |
 |---------|------|---------|
+| 1.4 | Mar 2026 | 9 new tools (28→37), 13 corrections, 2 external contributors. New: iOS Reminders suite (5 tools), `visualize:show_widget`, `gmail_create_draft`, `anthropic_api_in_artifacts`, `persistent_storage`. Corrected: `user_time_v0`/`user_location_v0` always-loaded on mobile, `memory_user_edits` 500-char limit, `chart_display_v0` intermittent (not deterministic crash), `window.storage` session-scoped, `tool_search` on browser with MCP. New chapter sections on artifact execution layer and MCP connector state. |
 | 1.3 | Feb 2026 | Platform architecture chapter, 3 new tool cards (weather, recipe, end_conversation), cross-platform verification of all 28 cards, settings/connectors appendix, all response formats confirmed |
 | 1.2 | Feb 2026 | 25 tool cards, discovery methodology, initial availability matrix |
 | 1.0–1.1 | Feb 2026 | Initial discovery and documentation |
+
+## Contributors
+
+This project is maintained by Francesco Marinoni Moretto and has benefited from external contributions:
+
+- **An independent security researcher** (anonymous by request) — 11 findings including the artifact API discovery, session-scoped storage, MCP endpoints in artifacts, skill filesystem topology, and egress proxy JWT architecture
+- **DMontgomery40** ([GitHub](https://github.com/DMontgomery40)) — Documented the complete iOS Reminders CRUD suite (5 tools) via GitHub issues
 
 ## Prior Art & Credits
 

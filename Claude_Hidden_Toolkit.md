@@ -2,31 +2,37 @@
 
 **The Definitive Guide to Claude.ai's Undocumented Internal Tools**
 
-*28 tools. Zero official documentation. Fully reverse-engineered.*
+*37 tools. Zero official documentation. Fully reverse-engineered.*
 
 **Francesco Marinoni Moretto** — AI Practice & Community Lead, N1AI
 
-Edition 1.3 — February 2026 · Based on systematic research with Claude Opus 4.6
+Edition 1.4 — March 2026 · Based on systematic research with Claude Opus 4.6
 
 ---
 
 © 2026 Francesco Marinoni Moretto. Published by N1AI. Licensed under CC BY 4.0.
 You are free to share and adapt this work with attribution.
 
-This book documents tools observed in Claude.ai as of February 2026. Anthropic may change, rename, or remove these tools at any time. This work is independent and not affiliated with Anthropic.
+This book documents tools observed in Claude.ai as of March 2026. Anthropic may change, rename, or remove these tools at any time. This work is independent and not affiliated with Anthropic.
 
 Living repository: [github.com/n1-ai/claude-hidden-toolkit](https://github.com/n1-ai/claude-hidden-toolkit)
 
-Author: [linkedin.com/in/francesco-moretto](https://www.linkedin.com/in/francesco-moretto)
+Author: [linkedin.com/in/francesco-moretto](https://linkedin.com/in/francesco-moretto)
 
 ---
 
 
 ## About the Author
 
-Francesco Marinoni Moretto is AI Practice & Community Lead at N1AI, where he bridges the gap between AI capabilities and practical business adoption. An 18-year community builder turned AI systems architect, he brings a pattern of discovering powerful tools and building adoption communities across European markets — from Italy's first CiviCRM evangelist in 2008 to the European AI developer circuit today. His published work includes Hardstop (the first fail-closed safety plugin for Claude agentic tools), Clarity Gate (epistemic verification for RAG systems), Stream Coding (a documentation-first development methodology), and the definitive guide to Claude's `memory_user_edits` system. This book grew from a simple observation: Claude.ai ships with 28+ internal tools, and almost none of them are documented. Full bio at the end of this book.
+Francesco Marinoni Moretto is AI Practice & Community Lead at N1AI, where he bridges the gap between AI capabilities and practical business adoption. An 18-year community builder turned AI systems architect, he brings a pattern of discovering powerful tools and building adoption communities across European markets — from Italy's first CiviCRM evangelist in 2008 to the European AI developer circuit today. His published work includes Hardstop (the first fail-closed safety plugin for Claude agentic tools), Clarity Gate (epistemic verification for RAG systems), Stream Coding (a documentation-first development methodology), and the definitive guide to Claude's `memory_user_edits` system. This book grew from a simple observation: Claude.ai ships with 37+ internal tools, and almost none of them are documented. Full bio at the end of this book.
 
-[linkedin.com/in/francesco-moretto](https://www.linkedin.com/in/francesco-moretto) · [github.com/frmoretto](https://github.com/frmoretto)
+[linkedin.com/in/francesco-moretto](https://linkedin.com/in/francesco-moretto) · [github.com/frmoretto](https://github.com/frmoretto)
+
+## Contributors
+
+An independent security researcher who prefers to remain anonymous contributed 11 findings for v1.4, including the discovery of `anthropic_api_in_artifacts`, `persistent_storage`, MCP endpoints in artifacts, skill filesystem topology, and egress proxy JWT architecture.
+
+DMontgomery40 (GitHub) independently discovered and documented the complete iOS Reminders CRUD suite (5 tools), enabling the first complete documentation of this iOS-exclusive capability.
 
 ## About N1AI
 
@@ -56,7 +62,7 @@ N1AI is a community-driven AI consultancy that puts human needs first. They help
 | [B](#appendix-b--discovery-methodology) | Discovery Methodology | |
 | [C](#appendix-c--tool-template-for-new-discoveries) | Tool Template for New Discoveries | |
 | [D](#appendix-d--settings--connectors-reference) | Settings & Connectors Reference | |
-| | [Technical Annex](#technical-annex--detailed-tool-cards) | 28 detailed tool cards with JSON examples |
+| | [Technical Annex](#technical-annex--detailed-tool-cards) | 37 detailed tool cards with JSON examples |
 
 ### Figures
 
@@ -89,7 +95,7 @@ N1AI is a community-driven AI consultancy that puts human needs first. They help
 
 ## Chapter 1 — Why This Book Exists
 
-Claude.ai is not just a chatbot. Beneath the conversational interface lies an orchestration engine with 28 distinct tools — capabilities that let Claude check the time, search your calendar, render interactive charts, draft emails with native app integration, find nearby restaurants, display them on a map, show weather forecasts, walk you through recipes step by step, and even set alarms on your phone.
+Claude.ai is not just a chatbot. Beneath the conversational interface lies an orchestration engine with 37 distinct tools — capabilities that let Claude check the time, search your calendar, render interactive charts, draft emails with native app integration, find nearby restaurants, display them on a map, show weather forecasts, walk you through recipes step by step, and even set alarms on your phone.
 
 > *Almost none of this is documented.*
 
@@ -99,7 +105,7 @@ This book fills that void. It is the result of systematic reverse-engineering: p
 
 ### The Documentation Gap
 
-A comprehensive search across GitHub, Reddit, LinkedIn, Twitter/X, YouTube, and the broader web reveals that this territory is almost entirely unexplored. Of the 28 tools documented in this book, only two — `conversation_search` and `recent_chats` — have been previously reverse-engineered with full schemas published (by Shlok Khemani, September 2025). One additional tool, `message_compose_v1`, was named in an Adversa AI security research paper. The remaining tools have zero public documentation by their internal names.
+A comprehensive search across GitHub, Reddit, LinkedIn, Twitter/X, YouTube, and the broader web reveals that this territory is almost entirely unexplored. Of the 37 tools documented in this book, only two — `conversation_search` and `recent_chats` — have been previously reverse-engineered with full schemas published (by Shlok Khemani, September 2025). One additional tool, `message_compose_v1`, was named in an Adversa AI security research paper. The remaining tools have zero public documentation by their internal names.
 
 
 The following table shows the documentation status of every tool at the time of writing:
@@ -136,11 +142,13 @@ This book serves three audiences. **Power users** will learn exactly what to say
 
 Chapters 1–2 provide context and architecture. Chapters 3–9 are deep dives into each tool category, organized by function. Chapter 10 covers the meta-tool that makes discovery possible. Chapter 11 is a complete reference — every tool, every parameter — designed for quick lookup. Chapter 12 looks ahead. The Technical Annex provides a detailed card for every tool with JSON call examples.
 
-This book has a companion GitHub repository at [github.com/n1-ai/claude-hidden-toolkit](https://github.com/n1-ai/claude-hidden-toolkit) that is updated as tools change. Think of this book as Edition 1.3 — a snapshot of the tool ecosystem as of February 2026 — and the repository as the living document.
+This book has a companion GitHub repository at [github.com/n1-ai/claude-hidden-toolkit](https://github.com/n1-ai/claude-hidden-toolkit) that is updated as tools change. Think of this book as Edition 1.4 — a snapshot of the tool ecosystem as of March 2026 — and the repository as the living document.
 
-**A note on accuracy:** Parameter schemas for deferred tools were captured directly from `tool_search` results and are exact. Always-loaded tool schemas were extracted from Claude's system-level tool definitions. All response formats have been empirically confirmed through cross-platform testing — no *(inferred)* markers remain in this edition. All claims except one explicitly marked parameter have been tested through both automated and manual verification across three platforms (browser, desktop app, mobile app) — see Appendix B for the full methodology.
+**A note on accuracy:** Parameter schemas for deferred tools were captured directly from `tool_search` results and are exact. Always-loaded tool schemas were extracted from Claude's system-level tool definitions. All response formats have been empirically confirmed through cross-platform testing — no *(inferred)* markers remain in this edition. All claims have been tested through both automated and manual verification across three platforms (browser, desktop app, mobile app) — see Appendix B for the full methodology.
 
-**What changed in v1.3:** This edition adds cross-platform testing results that fundamentally change the architecture picture. Three new tools (`weather_fetch`, `recipe_display_v0`, `end_conversation`) are documented, 15 existing tool cards are updated with platform-specific corrections, and a new Settings & Connectors reference is added as Appendix D. The platform architecture section in Chapter 2 is entirely new.
+**What changed in v1.3:** Edition 1.3 added cross-platform testing results that fundamentally changed the architecture picture. Three new tools (`weather_fetch`, `recipe_display_v0`, `end_conversation`) were documented, 15 existing tool cards were updated with platform-specific corrections, and a new Settings & Connectors reference was added as Appendix D.
+
+**What changed in v1.4:** This edition adds 9 new tools (37 total), corrects 13 factual errors from v1.3, and introduces two external contributors. Key corrections: `user_time_v0` and `user_location_v0` are **always-loaded** on mobile (not deferred as v1.3 stated); `memory_user_edits` accepts 500 characters (not 200); `chart_display_v0` crashes are intermittent (not deterministic); `window.storage` is **session-scoped** (not persistent across sessions); `anthropic_api_in_artifacts` works on Browser (not Desktop-only); `tool_search` exists on Browser with MCP connectors active. New tool cards include: 5 iOS Reminders tools, `visualize:show_widget`, `gmail_create_draft`, `anthropic_api_in_artifacts`, and `persistent_storage`. New sections cover MCP connector state as an architectural variable, Project context behavior, and the artifact execution layer.
 
 ---
 
@@ -152,13 +160,15 @@ Understanding how Claude.ai's tools work requires understanding two fundamental 
 
 Claude.ai's tools fall into two categories: **always-loaded** tools that are available from the start of every conversation, and **deferred** tools that are discovered and loaded on demand.
 
-Always-loaded tools include the workhorses: `web_search`, `web_fetch`, `image_search`, `places_search`, `places_map_display_v0`, `fetch_sports_data`, `google_drive_search`, `google_drive_fetch`, `memory_user_edits`, `conversation_search`, `recent_chats`, `ask_user_input_v0`, `message_compose_v1`, `weather_fetch`, `recipe_display_v0`, `end_conversation`, and the computer use tools. These are injected into every conversation's context from the start.
+Always-loaded tools include the workhorses: `web_search`, `web_fetch`, `image_search`, `places_search`, `places_map_display_v0`, `fetch_sports_data`, `google_drive_search`, `google_drive_fetch`, `memory_user_edits`, `conversation_search`, `recent_chats`, `ask_user_input_v0`, `message_compose_v1`, `weather_fetch`, `recipe_display_v0`, `end_conversation`, the computer use tools, and — on mobile — `user_time_v0` and `user_location_v0`. These are injected into every conversation's context from the start.
 
-Deferred tools include: `user_time_v0`, `user_location_v0`, `chart_display_v0`, `alarm_create_v0`, `timer_create_v0`, and the calendar suite. These are not loaded until Claude determines they're needed — either by recognizing a relevant user request or by explicitly searching for them using the meta-tool `tool_search`.
+Deferred tools include: `chart_display_v0`, `alarm_create_v0`, `timer_create_v0`, the calendar suite, and on iOS, the 5 Reminders tools. These are not loaded until Claude determines they're needed — either by recognizing a relevant user request or by explicitly searching for them using the meta-tool `tool_search`.
+
+> **v1.4 correction:** v1.3 incorrectly documented `user_time_v0` and `user_location_v0` as deferred tools. They are **always-loaded** on mobile regardless of MCP connector state.
 
 #### Why Deferred Loading?
 
-Context window efficiency. Every tool definition consumes tokens — roughly 200–800 tokens depending on parameter complexity. By deferring 11 tools that are only needed in specific scenarios (time queries, alarm setting, calendar management), Claude.ai saves an estimated 3,000–5,000 tokens per conversation, keeping its baseline context lean. The trade-off is a slight latency on first use — the tool must be discovered before it can be called. Once loaded, deferred tools remain available for the rest of the conversation.
+Context window efficiency. Every tool definition consumes tokens — roughly 200–800 tokens depending on parameter complexity. By deferring tools that are only needed in specific scenarios (alarm setting, calendar management, chart rendering), Claude.ai saves thousands of tokens per conversation, keeping its baseline context lean. The trade-off is a slight latency on first use — the tool must be discovered before it can be called. Once loaded, deferred tools remain available for the rest of the conversation.
 
 
 ### Platform Architecture: Three Surfaces, Three Tool Sets
@@ -169,11 +179,12 @@ This is the single most important finding from cross-platform testing: **Claude.
 
 | Platform | Always-Loaded Tools | `tool_search` Present? | Deferred Tools Available |
 |----------|---------------------|----------------------|-------------------------|
-| Browser (claude.ai) | 21 | No | None |
+| Browser (claude.ai) | 21 | Conditional (MCP tools only, when connectors active) | None (consumer) |
 | Desktop App | 22 | Yes (MCP tools only) | 32 MCP tools (e.g., Chrome + Filesystem) |
-| Mobile App | 20 | Yes (consumer tools) | 11 consumer deferred tools |
+| Mobile App (Android) | 22 (incl. `user_time_v0`, `user_location_v0`) | Yes (consumer tools) | 9 consumer deferred tools |
+| Mobile App (iOS) | 22 (incl. `user_time_v0`, `user_location_v0`) | Yes (consumer tools) | 14 consumer deferred tools (incl. 5 Reminders) |
 
-The implications are significant. On the **browser**, what you see is what you get — there are 21 always-loaded tools and no deferred loading system at all. `tool_search` does not exist. On the **desktop app**, `tool_search` exists but only discovers MCP integration tools (such as Claude in Chrome and Filesystem tools) — it returns up to 32 integration tools rather than consumer deferred tools. On the **mobile app**, `tool_search` discovers the 11 consumer deferred tools documented in this book.
+The implications are significant. On the **browser**, `tool_search` is conditionally available — it appears only when MCP connectors (Google Calendar, Gmail) are active, and returns only MCP tools with a `Provider:tool_name` namespace prefix (e.g., "Google Calendar:gcal_list_calendars"). Consumer deferred tools are never available on browser. On the **desktop app**, `tool_search` exists but only discovers MCP integration tools. On the **mobile app**, `tool_search` discovers the consumer deferred tools documented in this book, and `user_time_v0`/`user_location_v0` are always-loaded (bypassing `tool_search` entirely).
 
 #### Platform-Exclusive Tools
 
@@ -183,10 +194,35 @@ Some tools exist on only a subset of platforms:
 |------|---------|-------------|------------|
 | `weather_fetch` | ✅ | ✅ | ❌ |
 | `recipe_display_v0` | ✅ | ✅ | ❌ |
-| `tool_search` | ❌ | ✅ (MCP only) | ✅ (consumer) |
-| 11 consumer deferred tools | ❌ | ❌ | ✅ |
+| `visualize:show_widget` | ✅ | ✅ | ❌ |
+| `tool_search` | ✅ (MCP only, conditional) | ✅ (MCP only) | ✅ (consumer) |
+| `user_time_v0` / `user_location_v0` | ❌ | ❌ | ✅ (always-loaded) |
+| Consumer deferred tools | ❌ | ❌ | ✅ (9 Android / 14 iOS) |
+| iOS Reminders suite (5 tools) | ❌ | ❌ | ✅ (iOS only) |
 
-This means, for example, that `alarm_create_v0`, `timer_create_v0`, `user_time_v0`, `user_location_v0`, `chart_display_v0`, and the calendar suite are only available as deferred tools on the mobile app. On browser and desktop, these capabilities either don't exist or Claude falls back to alternative approaches.
+This means, for example, that `alarm_create_v0`, `timer_create_v0`, `chart_display_v0`, and the calendar suite are only available as deferred tools on the mobile app. `user_time_v0` and `user_location_v0` are always-loaded on mobile (not deferred). On browser and desktop, these capabilities either don't exist or Claude falls back to alternative approaches.
+
+### MCP Connector State as an Architectural Variable
+
+A finding new in v1.4: MCP connector state (whether Google Calendar, Gmail, etc. are connected in Settings → Connectors) affects the tool inventory differently depending on the tool type:
+
+- **Native consumer tools** (`alarm_create_v0`, `timer_create_v0`, `chart_display_v0`, calendar suite): Always in the deferred pool on mobile **regardless** of MCP connector state. MCP is irrelevant.
+- **Context tools** (`user_time_v0`, `user_location_v0`): Always-loaded on mobile **regardless** of MCP connector state.
+- **MCP Connector tools** (`gcal_list_calendars`, `gmail_create_draft`, etc.): Appear in the always-loaded pool **only** when their respective connectors are active. When connectors are disconnected, these tools disappear entirely.
+- **`tool_search` on browser**: Only appears when MCP connectors are active. Without connectors, `tool_search` does not exist on browser.
+
+This means Android distinguishes between native deferred tools (always available in the deferred pool) and MCP deferred tools (conditionally loaded based on connector state).
+
+### Project Context Does Not Change Tool Behavior
+
+Testing in v1.4 confirmed that Claude Projects do not affect tool behavior:
+
+- `tool_search` returns the identical tool pool inside and outside a Project
+- `window.storage` remains session-scoped inside a Project (not project-scoped)
+- `anthropic_api_in_artifacts` works identically inside a Project
+- `chart_display_v0` behavior is identical inside a Project
+
+The only tool behavior that changes in Projects is the MCP Connector layer (Layer 1 calendar tools appear in Projects with Google Calendar connected — see Chapter 6).
 
 #### Session Instability Warning
 
@@ -197,7 +233,7 @@ Switching between clients mid-conversation changes your available tools. The too
 When you request a capability that doesn't exist on your current platform, Claude falls back gracefully rather than failing:
 
 - **Weather** (mobile): uses `web_search` instead of `weather_fetch` — returns text-only weather data, no interactive widget
-- **Charts** (browser/desktop): creates a React artifact with Recharts instead of `chart_display_v0` — opens in the artifact sidebar rather than inline. Note: even on mobile where `chart_display_v0` exists, it currently crashes the app on all chart types (see Chapter 5) — making the artifact fallback the only working option on any platform
+- **Charts** (browser/desktop): creates a React artifact with Recharts instead of `chart_display_v0` — opens in the artifact sidebar rather than inline. On desktop and browser, `visualize:show_widget` provides an alternative inline chart option using Chart.js with broader chart type support (pie, donut, histogram, heatmap, bubble). On mobile, `chart_display_v0` exists but has intermittent instability (see Chapter 5)
 - **Recipes** (mobile): returns plain text recipe in conversation — no interactive widget, no cooking mode
 - **Alarms/timers** (browser/desktop): suggests using Google timer, a voice assistant, or offers to create an artifact-based timer
 - **Location** (browser/desktop): `user_location_v0` is absent; Claude states it cannot access local time/location and asks manually
@@ -212,7 +248,7 @@ Not all tools carry version suffixes. `web_search`, `web_fetch`, and `fetch_spor
 
 The most architecturally interesting tool is `tool_search` — a meta-tool whose sole purpose is discovering other tools. It accepts a keyword query and returns matching tool names with their parameter schemas. This is how Claude.ai implements deferred loading: when a user asks "What time is it?", Claude can search for time-related tools, discover `user_time_v0`, load it, and call it — all within a single response.
 
-**Critical platform caveat:** As documented above, `tool_search` behaves fundamentally differently across platforms. The discovery methodology in Chapter 10 was conducted on the mobile app and is only reproducible there. On the browser, `tool_search` does not exist. On the desktop app, it returns MCP integration tools instead of consumer deferred tools.
+**Critical platform caveat:** As documented above, `tool_search` behaves fundamentally differently across platforms. The discovery methodology in Chapter 10 was conducted on the mobile app and is only reproducible there. On the browser, `tool_search` only appears when MCP connectors are active and returns only MCP tools. On the desktop app, it returns MCP integration tools instead of consumer deferred tools.
 
 Chapter 10 covers `tool_search` in detail, including the keyword sweeps used to enumerate the full toolkit for this book.
 
@@ -234,17 +270,21 @@ Two tools give Claude awareness of the user's physical context: where they are a
 
 The simplest tool in the entire toolkit. Zero parameters, one response field. Call it and get the current time in the user's timezone.
 
-**Platform:** Mobile App only (deferred via `tool_search`). On browser and desktop, this tool is absent — Claude states the system date from its context but acknowledges it cannot access local time.
+**Platform:** Mobile App only (**always-loaded** — v1.3 incorrectly documented as deferred). On browser and desktop, this tool is absent — Claude states the system date from its context but acknowledges it cannot access local time.
 
 **Parameters:** None
 
 **Response:**
 
 ```json
-{"current_time": "2026-02-14T13:04:23.428731+01:00"}
+// Android format (microseconds, colon in offset)
+{"current_time": "2026-03-15T10:49:50.411154+01:00"}
+
+// iOS format (no microseconds, compact offset)
+{"current_time": "2026-03-15T12:11:22+0100"}
 ```
 
-The response is ISO 8601 with microsecond precision and the user's UTC offset. The timezone is detected from the user's browser or device settings — not from IP geolocation. This means VPN users still get their device's configured timezone, and manual timezone overrides are respected.
+The response is ISO 8601 with the user's UTC offset. **iOS vs Android difference:** Android includes microsecond precision and uses a colon in the UTC offset (`+01:00`); iOS omits microseconds and uses a compact offset (`+0100`). The timezone is detected from the user's device settings — not from IP geolocation. This means VPN users still get their device's configured timezone, and manual timezone overrides are respected.
 
 Claude uses this tool proactively when time context improves a response: scheduling questions, timezone conversions, day-of-week awareness, and timestamping activities. It also serves as a prerequisite for calendar operations, where ISO 8601 timestamps with correct offsets are required.
 
@@ -260,17 +300,18 @@ Claude uses this tool proactively when time context improves a response: schedul
 
 The only tool that requires explicit user permission. When called, the device displays a geolocation prompt. If granted, it returns coordinates; if denied, Claude falls back gracefully.
 
-**Platform:** Mobile App only (deferred via `tool_search`). On browser and desktop, this tool is absent — Claude cannot determine user location and will ask manually.
+**Platform:** Mobile App only (**always-loaded** — v1.3 incorrectly documented as deferred). On browser and desktop, this tool is absent — Claude cannot determine user location and will ask manually.
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `accuracy` | string | Yes | `"low"` (city-level) or `"high"` (GPS-level) |
 
-This tool is most commonly used as a precursor to `places_search` — get the user's location, then search for nearby businesses using the coordinates as a bias. Claude appears cautious about calling it proactively; it is typically triggered by location-implying language ("near me," "nearby," "around here").
+This tool is most commonly used as a precursor to `places_search` — get the user's location, then search for nearby businesses using the coordinates as a bias. Claude appears cautious about calling it proactively; it is typically triggered by location-implying language ("near me," "nearby," "around here"). **Implicit triggers are unreliable** — "Where am I?" may not be sufficient; explicit invocation is more reliable.
 
 **Response** *(confirmed)*:
 
 ```json
+// Android response
 {
   "status": "success",
   "latitude": 45.4707004,
@@ -284,9 +325,26 @@ This tool is most commonly used as a precursor to `places_search` — get the us
     "postal_code": "20100"
   }
 }
+
+// iOS response (richer — adds sub_locality and accuracy fields)
+{
+  "status": "success",
+  "latitude": 45.4707004,
+  "longitude": 9.1248245,
+  "accuracy": 65.0,
+  "geocoded": {
+    "address": "Via Example 15",
+    "administrative_area": "Lombardia",
+    "country": "Italia",
+    "locality": "Milano",
+    "sub_locality": "Municipio 1",
+    "name": "15",
+    "postal_code": "20100"
+  }
+}
 ```
 
-Key findings from testing: the `accuracy` parameter ("high" vs "low") produced **no meaningful difference** in the response — coordinates were nearly identical in both cases. The `geocoded` object provides a full reverse-geocoded address that the coordinates alone don't convey. There is **no** `accuracy_meters` field in the response.
+Key findings from testing: the `accuracy` parameter ("high" vs "low") produced **no meaningful difference** in the response — coordinates were nearly identical in both cases. The `geocoded` object provides a full reverse-geocoded address that the coordinates alone don't convey. **iOS vs Android difference:** iOS adds a `sub_locality` field and an `accuracy` field (in meters) to the response that Android lacks.
 
 #### Two-Layer Permissions (Mobile)
 
@@ -311,8 +369,8 @@ Both must be granted for the tool to return precise coordinates. The result widg
 | --- | --- | --- |
 | Permission required | No | Yes (device prompt — two layers on Android) |
 | Parameters | 0 | 1 (`accuracy` — but no observable effect in testing) |
-| Platform | Mobile only (deferred) | Mobile only (deferred) |
-| Response | ISO 8601 timestamp | Coordinates + reverse-geocoded address |
+| Platform | Mobile only (always-loaded) | Mobile only (always-loaded) |
+| Response | ISO 8601 timestamp (format differs iOS vs Android) | Coordinates + reverse-geocoded address (iOS richer than Android) |
 | Platform variance | Mobile: exact time; Browser/Desktop: system date only | Mobile: GPS + geocoded; Browser/Desktop: absent |
 | Feeds into | Calendar, alarm, timer tools | `places_search`, weather, distance queries |
 
@@ -391,9 +449,9 @@ Cross-platform testing revealed several differences from the v1.2 description:
 
 **Platform:** Mobile App only (deferred via `tool_search`). On browser and desktop, Claude falls back to creating a React artifact with Recharts — the chart opens in the artifact sidebar rather than appearing inline in the conversation.
 
-> **⚠️ Mobile crash bug (confirmed):** As of February 15, 2026, `chart_display_v0` crashes the Claude mobile app on every chart type tested (line, bar, scatter). The tool is discovered and called successfully, but the app terminates the moment it attempts to render. Reproduced across fresh chats and Project chats. This is not a transient glitch — it is a consistently reproducible crash that suggests the mobile chart renderer was never fully implemented. The tool exists in the deferred toolkit, Claude will find it and call it, but the result is a force-close. This makes `chart_display_v0` the only tool in the entire toolkit that is technically available but functionally broken — a useful reminder that `v0` means what it says.
+> **⚠️ Mobile instability warning (updated March 2026):** `chart_display_v0` has **intermittent instability** on mobile — it sometimes crashes the app and sometimes renders successfully. v1.3 reported 100% crash rate, but further testing in v1.4 showed the crash is state-dependent rather than deterministic. The tool is always deferred on both Android and iOS, and MCP connector state is irrelevant to its behavior.
 
-For readers: **do not rely on this tool**. If you need charts in Claude, use a React artifact (works on all platforms) or code execution with matplotlib (browser and desktop). The inline chart tool is documented here for completeness and because it reveals how Anthropic's tool pipeline works — tools can be discoverable and callable before they are stable.
+For readers: **use this tool with caution**. If you need reliable charts in Claude, use a React artifact (works on all platforms), code execution with matplotlib (browser and desktop), or `visualize:show_widget` (browser and desktop — see below). The inline chart tool is documented here for completeness and because it reveals how Anthropic's tool pipeline works — tools can be discoverable and callable before they are stable.
 
 The chart appears directly in the conversation stream, below Claude's text. No artifact sidebar opens. The chart is interactive — hover over any data point to see its exact value, click a legend entry to hide or show a series, and the chart resizes responsively to the chat width.
 
@@ -422,11 +480,46 @@ The tool supports at minimum line charts, bar charts, and scatter plots. Charts 
 
 Use `chart_display_v0` for quick visualization during conversation on mobile. Use artifacts for polished, highly customized visualizations. Use code execution when you need programmatic control or data processing. Key limitation: no SVG/PNG export — if the user needs to save the chart, use a code artifact instead.
 
+#### Non-Functional and Functional Parameters (v1.4)
+
+Testing revealed that several `chart_display_v0` parameters are non-functional:
+- **Non-functional:** `format`, `min`, `max` — these are accepted by the schema but have no observable effect on the rendered chart
+- **Functional:** `color` (hex values work — e.g., `"#FF5733"`), `scale: "log"` (logarithmic scale works correctly)
+- **`values` type:** iOS accepts integers in the `values` array, not just strings as v1.3 documented. The schema may be more permissive than originally documented.
+
+The tool description includes the instruction "ALWAYS use this tool after health queries," suggesting it was originally designed for health data visualization.
+
+### `visualize:show_widget`: The Desktop/Browser Inline Alternative
+
+`visualize:show_widget` is a separate rendering system that provides inline visualization on desktop and browser — the surfaces where `chart_display_v0` is absent. It is **architecturally distinct** from the tool/deferred layer: it does not appear in `tool_search` results and operates outside the standard tool pipeline.
+
+**Platform:** Desktop App and Browser only. Absent on mobile.
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `widget_code` | string | Yes | Full Chart.js / HTML / JavaScript code for the widget |
+| `title` | string | Yes | Widget title displayed above the visualization |
+| `loading_messages` | array | No | Messages shown while the widget loads |
+| `i_have_seen_read_me` | boolean | Yes | Acknowledgment flag (must be `true`) |
+
+Unlike `chart_display_v0` (limited to line, bar, scatter), `visualize:show_widget` supports full Chart.js capabilities: **pie, donut, histogram, heatmap, bubble charts**, and more. It also supports six module types: `diagram`, `mockup`, `interactive`, `data_viz`, `art`, and `chart`.
+
+The widget renders **inline in the chat stream** — not in the artifact sidebar — making it functionally equivalent to `chart_display_v0` in terms of placement, but with dramatically broader visualization capabilities.
+
+| | `chart_display_v0` | `visualize:show_widget` |
+| --- | --- | --- |
+| Platform | Mobile only | Desktop + Browser only |
+| Chart types | Line, bar, scatter | Full Chart.js (pie, donut, histogram, heatmap, bubble...) |
+| Rendering | Inline | Inline |
+| Discovery | Via `tool_search` (deferred) | Not in tool layer |
+| Parameters | 5 | 4 |
+| Stability | Intermittent instability | Stable |
+
 ---
 
 ## Chapter 6 — Calendar & Device Integration
 
-Eight tools handle scheduling and device-level functionality. Six manage calendar events (search, create, update, delete), and two create alarms and timers. Together, they make Claude a capable personal assistant that can interact with your actual schedule and device.
+Thirteen tools handle scheduling and device-level functionality on mobile (8 on Android, 13 on iOS). Six manage calendar events (search, create, update, delete), and two create alarms and timers. Together, they make Claude a capable personal assistant that can interact with your actual schedule and device.
 
 ### The Calendar Suite
 
@@ -526,6 +619,28 @@ The timer widget displays: clock icon, duration, and a "View timers" link (local
 | Platform | Mobile only (deferred) | Mobile only (deferred) |
 | Desktop/Browser fallback | Suggests voice assistant or Google | Suggests Google timer or artifact |
 
+### iOS Reminders Suite (v1.4)
+
+Five additional deferred tools are available exclusively on iOS, providing full CRUD access to the native iOS Reminders app. These tools were independently discovered by DMontgomery40 (GitHub) and verified empirically in v1.4 testing.
+
+| Tool | Purpose |
+| --- | --- |
+| `reminder_list_search_v0` | Lists available Reminders lists |
+| `reminder_create_v0` | Creates a new reminder |
+| `reminder_search_v0` | Searches existing reminders |
+| `reminder_update_v0` | Updates an existing reminder |
+| `reminder_delete_v0` | Deletes a reminder |
+
+**Platform:** iOS only — confirmed absent on Android. Deferred via `tool_search`.
+
+> **Note:** DMontgomery40's original GitHub issue #2 has a typo: "reminders_create_v0" — the correct tool name is `reminder_create_v0` (singular, no trailing "s").
+
+Key differences from the calendar suite:
+- **Alarms use `secondsBefore`** for reminder alerts; calendar tools use `minutesBefore` for nudges. This is an important distinction when setting reminders with alarms.
+- **Update and delete require IDs** from a prior `reminder_search_v0` call — there is no title-based targeting. This follows the same search-then-act pattern as the calendar suite.
+
+See Tool Cards 29–33 in the Technical Annex for full parameter schemas and examples.
+
 ---
 
 ## Chapter 7 — Search & Data Tools
@@ -538,7 +653,7 @@ The largest category: eleven tools that retrieve information from the web, Googl
 
 The typical research workflow chains `web_search` into `web_fetch`: search to find sources, fetch to read them in full. For example, when a user asks "What did the Fed decide last week?", Claude calls `web_search` with a short query like `"Fed interest rate decision"`, gets 10 snippets with titles, URLs, and preview text, identifies the most authoritative source (a Reuters or AP article), then calls `web_fetch` on that URL to read the full article. The response is synthesized with citations. Claude decides when to search vs. answer from memory based on topic recency — fast-changing information (prices, scores, current office holders) triggers a search; stable facts (historical dates, scientific principles) don't.
 
-`web_fetch` retrieves the full content of a webpage by URL. Important constraint discovered through testing: `web_fetch` can only access URLs that appeared in `web_search` results or were provided directly by the user. Attempting to fetch an arbitrary URL that wasn't surfaced by search or provided by the user is restricted. It cannot access login-gated or paywalled content — paywalled pages return only the page shell (navigation menus, headers) with no article body, a silent truncation rather than an explicit error. Common failure modes include JavaScript-heavy sites (which return minimal content) and rate limiting on repeated fetches.
+`web_fetch` retrieves the full content of a webpage by URL (9 parameters — v1.3 documented 8; the new `html_extraction_method` parameter is documented in Tool Card 15). Important constraint discovered through testing: `web_fetch` can only access URLs that appeared in `web_search` results or were provided directly by the user. Attempting to fetch an arbitrary URL that wasn't surfaced by search or provided by the user is restricted. It cannot access login-gated or paywalled content — paywalled pages return only the page shell (navigation menus, headers) with no article body, a silent truncation rather than an explicit error. Common failure modes include JavaScript-heavy sites (which return minimal content) and rate limiting on repeated fetches.
 
 `image_search` finds images on the web and returns them inline. The tool description mentions dimensions are included, but in testing Claude did not surface pixel dimensions in its response — they may be available in the raw tool response metadata but not exposed to the user. It has an unusual constraint: minimum 3 results per call (requesting fewer is bumped to 3), with a maximum of 5 as an upper bound (requesting 5 may return 4). Content safety restrictions apply — copyrighted characters, celebrity photos, and graphic content are filtered.
 
@@ -668,7 +783,9 @@ Three tools form Claude's memory system, operating at different levels of persis
 | Episodic (topic) | `conversation_search` | Past conversation content | Until chat deleted | Project-scoped |
 | Episodic (time) | `recent_chats` | Recent conversations | Until chat deleted | Project-scoped |
 
-`memory_user_edits` is the most thoroughly documented tool in this ecosystem, thanks to the author's prior guide ([github.com/frmoretto/claude-memory-user-edits-guide](https://github.com/frmoretto/claude-memory-user-edits-guide)). The core insight: memory edits work for **facts**, not **behaviors**. "User works at Acme Corp" persists reliably; "Always check docs first" does not. The tool supports four commands: `view`, `add`, `remove`, `replace`. Maximum 30 edits, 200 characters each (hard server limit — the parameter schema advertises 500 but the server rejects anything over 200).
+`memory_user_edits` is the most thoroughly documented tool in this ecosystem, thanks to the author's prior guide ([github.com/frmoretto/claude-memory-user-edits-guide](https://github.com/frmoretto/claude-memory-user-edits-guide)). The core insight: memory edits work for **facts**, not **behaviors**. "User works at Acme Corp" persists reliably; "Always check docs first" does not. The tool supports four commands: `view`, `add`, `remove`, `replace`. Maximum 30 edits, 500 characters each (client-side validation — the schema `maxLength` is 500, confirmed cross-surface in v1.4 testing). The 30-entry count cap is the binding constraint in practice.
+
+> **v1.4 correction:** v1.3 stated a 200-character hard server limit. This was incorrect. The actual limit is 500 characters, enforced client-side with the error message "String should have at most 500 characters." The limit may vary by tier or build.
 
 > **📸 IMAGE: `fig_18_memory_view.png`**
 > Screenshot of Claude showing stored memory edits.
@@ -703,13 +820,15 @@ Memory behavior is controlled by toggles in Settings → Capabilities:
 
 Five tools give Claude access to a Linux computer (Ubuntu 24) for file creation, code execution, and artifact production. These power the "Create Files" feature in Claude.ai.
 
-| Tool | Purpose |
-| --- | --- |
-| `bash_tool` | Execute shell commands |
-| `view` | Read files, directories, and images |
-| `create_file` | Create new files with content |
-| `str_replace` | Edit existing files (find and replace) |
-| `present_files` | Share files with the user for download |
+| Tool | Purpose | Params |
+| --- | --- | --- |
+| `bash_tool` | Execute shell commands | 2 (`command`, `description` — both required) |
+| `view` | Read files, directories, and images | — |
+| `create_file` | Create new files with content | — |
+| `str_replace` | Edit existing files (find and replace) | 4 (`path`, `old_str`, `new_str`, `description` — `new_str` optional: empty = delete) |
+| `present_files` | Share files with the user for download | — |
+
+> **v1.4 correction:** v1.3 documented `bash_tool` as 1 parameter and `str_replace` as 3 parameters. Both now require a `description` parameter. For `str_replace`, `new_str` is optional — omitting it performs a deletion of the matched string.
 
 The computer use tools are architecturally distinct from other tools: they operate on a sandboxed Linux environment with network access (limited to whitelisted domains), a filesystem that resets between tasks, and a skill system that provides best-practice templates for document creation. Files are created in `/home/claude`, finalized to `/mnt/user-data/outputs`, and shared via `present_files`.
 
@@ -738,6 +857,46 @@ Claude.ai ships with public skills for document types: `docx`, `pptx`, `xlsx`, `
 
 Skills function as just-in-time instruction: before creating a Word document, Claude reads the docx skill file to learn formatting rules, validation steps, and common pitfalls — producing dramatically better output than without the skill. This pattern explains why document creation quality varies significantly between standard chats and properly configured Projects.
 
+#### Skill Filesystem Mount Topology (v1.4)
+
+The skill system uses an ephemeral overlay mount. `/mnt/skills/user` is a temporary filesystem — custom skills placed there by the user are available only within the current session. The `/mnt/skills/public` directory contains Anthropic's bundled skill files.
+
+#### Egress Proxy Architecture (v1.4)
+
+The sandbox's network access uses an Envoy-based egress proxy with JWT authentication for container identification. When a request targets a non-whitelisted domain, the proxy returns HTTP 403 Forbidden with an `x-deny-reason: host_not_allowed` header. The JWT tokens identify the specific container, enabling per-session traffic policies.
+
+### The Artifact Execution Layer (v1.4)
+
+Three capabilities discovered in v1.4 reveal that artifacts are not just display surfaces — they are an execution layer with access to APIs, storage, and external services.
+
+#### `anthropic_api_in_artifacts`
+
+React artifacts can call the Anthropic API directly — without an API key. The runtime injects authentication at the infrastructure level, enabling "Claude-in-Claude" patterns where an artifact contains a working AI chatbot or content generator.
+
+**Platform:** Desktop App and Browser (React artifacts only). HTML artifacts are blocked by CSP (`TypeError: Failed to fetch`).
+
+Key findings:
+- HTTP 200 confirmed on both Desktop and Browser React artifacts
+- Model used: `claude-sonnet-4-5-20250929`
+- New response fields in v1.4: `cache_creation` object (with `ephemeral_5m` and `ephemeral_1h` fields), `service_tier`, `inference_geo`
+- Controlled by the "AI-powered artifacts" toggle in Settings → Capabilities
+
+#### `persistent_storage` (`window.storage`)
+
+> **⚠️ CRITICAL: SESSION-SCOPED ONLY — The name "persistent_storage" is misleading.** Data stored via `window.storage` is available within a single chat session (across artifact re-renders) but is **destroyed when the session closes**. Attempting to retrieve data in a new chat returns: "Internal server error while processing action." This is NOT cross-session persistence. Project context makes no difference — storage is session-scoped regardless.
+
+React artifacts have access to a `window.storage` object with four methods: `get`, `set`, `delete`, `list`. The backend uses gRPC/protobuf (`StorageSetResponse`/`StorageGetResponse`). Storage supports two scopes: personal (`shared=false`) and shared (`shared=true`). Maximum size is 5MB per key.
+
+**Platform:** Desktop App and Browser (React artifacts only — `window.storage` is `undefined` in HTML artifacts).
+
+#### MCP Endpoints in Artifacts (v1.4)
+
+React artifacts can access MCP connector endpoints — specifically Google Calendar and Gmail. This means an artifact can read calendar events or create email drafts, extending the artifact execution layer beyond simple display into service integration.
+
+#### Mobile Capability Cliff (v1.4)
+
+None of the artifact execution layer capabilities (`anthropic_api_in_artifacts`, `persistent_storage`, MCP endpoints) are available on mobile. Combined with the absence of `visualize:show_widget`, `weather_fetch`, and `recipe_display_v0`, mobile users have access to a fundamentally different — and more limited — artifact experience.
+
 ---
 
 ## Chapter 10 — The Meta-Tool: tool_search
@@ -749,13 +908,15 @@ The most architecturally significant tool in the entire system is `tool_search` 
 | `query` | string | Yes | Search keywords to match against tool names and descriptions |
 | `limit` | integer | No | Maximum results (1-20, default 5) |
 
-### Platform-Dependent Behavior (v1.3 critical finding)
+### Platform-Dependent Behavior (updated v1.4)
 
 `tool_search` is not a universal capability — it behaves fundamentally differently depending on your platform:
 
-- **Browser (claude.ai):** `tool_search` does not exist. There is no deferred loading system. All available tools are always-loaded.
+- **Browser (claude.ai):** `tool_search` is **conditionally available** — it appears only when MCP connectors (Google Calendar, Gmail) are active, and returns only MCP tools with a `Provider:tool_name` namespace prefix (e.g., "Google Calendar:gcal_list_calendars"). Without active connectors, `tool_search` does not exist on browser. Consumer deferred tools are never available on browser regardless of connector state.
 - **Desktop App:** `tool_search` exists but only discovers MCP integration tools. If you have Claude in Chrome and Filesystem connected, it returns all 32 MCP tools (18 Chrome + 14 Filesystem) **regardless of query** — keywords only affect result ordering, not which tools appear. It behaves as a "load everything" operation rather than a filtered search. It does **not** discover consumer deferred tools like `alarm_create_v0` or `chart_display_v0`.
-- **Mobile App:** `tool_search` exists and discovers the 11 consumer deferred tools documented in this book. This is the only platform where the discovery methodology below is reproducible.
+- **Mobile App:** `tool_search` exists and discovers the consumer deferred tools documented in this book. Note: `user_time_v0` and `user_location_v0` are **always-loaded** on mobile and therefore bypass `tool_search` entirely — they do not appear in search results because they are already loaded. This is the only platform where the discovery methodology below is reproducible.
+
+> **v1.4 correction:** v1.3 stated `tool_search` does not exist on browser. It is conditionally available when MCP connectors are active. v1.3 also stated `user_time_v0` and `user_location_v0` were discoverable via `tool_search` — they are always-loaded on mobile and do not need discovery.
 
 This is the single most important caveat in this chapter: **the discovery log below was produced on the mobile app and is only reproducible there.**
 
@@ -767,17 +928,17 @@ This book was made possible by systematic keyword sweeps through `tool_search` o
 
 The following are the actual `tool_search` calls used to enumerate the toolkit for this book, conducted on the **Claude mobile app** (no Project, no MCP integrations):
 
-> **Environment note:** These results are only reproducible on the Claude mobile app in a standard chat without Project or MCP connections. On the browser, `tool_search` does not exist. On the desktop app, it returns MCP tools instead.
+> **Environment note:** These results are only reproducible on the Claude mobile app in a standard chat without Project or MCP connections. On the browser, `tool_search` only discovers MCP tools (when connectors are active). On the desktop app, it returns MCP tools instead.
 
 > **Reproducibility note:** `tool_search` uses fuzzy matching — the same query may return different results across sessions. In verification testing, `query="user"` returned `user_location_v0` plus 6 other tools but **missed** `user_time_v0`, which required a separate query ("time clock current"). Tools bleed across unrelated queries (e.g., `user_location_v0` appeared in nearly every search). The discovery log below represents the results from the original enumeration session; your results may vary. The key is that all 11 tools are discoverable — just not always from the same queries.
 
-We started with the broadest possible query: "user". This immediately surfaced the two context tools.
+We started with the broadest possible query: "user". In the original v1.2/v1.3 enumeration session, this surfaced the two context tools. However, v1.4 testing revealed that `user_time_v0` and `user_location_v0` are **always-loaded** on mobile — they appear in this log because they were discovered during the original session, but they bypass `tool_search` in normal operation.
 
 ```
 Query: tool_search(query="user", limit=20)
 Results:
-  → user_time_v0 — "Retrieves current time in user timezone"
-  → user_location_v0 — "Gets user geographic location"
+  → user_time_v0 — "Retrieves current time in user timezone" (note: always-loaded on mobile as of v1.4)
+  → user_location_v0 — "Gets user geographic location" (note: always-loaded on mobile as of v1.4)
 ```
 
 Pivoting to action verbs — "create display generate" — revealed the visualization and scheduling tools.
@@ -860,8 +1021,6 @@ This chapter provides a quick-reference index to every documented tool. For full
 
 | Tool | Category | What It Does | Card |
 | --- | --- | --- | --- |
-| `user_time_v0` | Context | Returns current time in user's timezone | [1](#tool-card-1) |
-| `user_location_v0` | Context | Gets user coordinates (requires permission) | [2](#tool-card-2) |
 | `chart_display_v0` | Visualization | Renders inline interactive charts | [3](#tool-card-3) |
 | `alarm_create_v0` | Device | Creates device alarms (mobile-native) | [6](#tool-card-6) |
 | `timer_create_v0` | Device | Creates countdown timers (mobile-native) | [7](#tool-card-7) |
@@ -871,11 +1030,18 @@ This chapter provides a quick-reference index to every documented tool. For full
 | `event_create_v1` | Calendar | Creates multiple events (batch) | [11](#tool-card-11) |
 | `event_update_v0` | Calendar | Updates existing events | [12](#tool-card-12) |
 | `event_delete_v0` | Calendar | Deletes calendar events | [13](#tool-card-13) |
+| `reminder_list_search_v0` | Reminders | Lists iOS Reminders lists | [29](#tool-card-29) |
+| `reminder_create_v0` | Reminders | Creates iOS reminders | [30](#tool-card-30) |
+| `reminder_search_v0` | Reminders | Searches iOS reminders | [31](#tool-card-31) |
+| `reminder_update_v0` | Reminders | Updates iOS reminders | [32](#tool-card-32) |
+| `reminder_delete_v0` | Reminders | Deletes iOS reminders | [33](#tool-card-33) |
 
 ### Always-Loaded Tools
 
 | Tool | Category | What It Does | Card |
 | --- | --- | --- | --- |
+| `user_time_v0` | Context | Returns current time in user's timezone (mobile) | [1](#tool-card-1) |
+| `user_location_v0` | Context | Gets user coordinates (requires permission, mobile) | [2](#tool-card-2) |
 | `web_search` | Search | Queries search engine, returns top 10 results | [14](#tool-card-14) |
 | `web_fetch` | Search | Fetches full webpage content by URL | [15](#tool-card-15) |
 | `image_search` | Search | Finds and returns inline images | [16](#tool-card-16) |
@@ -899,17 +1065,26 @@ This chapter provides a quick-reference index to every documented tool. For full
 | `present_files` | Computer Use | Shares files with user for download | — |
 | `tool_search` | Meta | Discovers deferred tools by keyword | [25](#tool-card-25) |
 
+### Non-Tool-Layer Capabilities (v1.4)
+
+| Capability | Category | What It Does | Card |
+| --- | --- | --- | --- |
+| `visualize:show_widget` | Visualization | Inline Chart.js widgets (desktop/browser) | [34](#tool-card-34) |
+| `gmail_create_draft` | Email | Creates Gmail drafts via MCP connector | [35](#tool-card-35) |
+| `anthropic_api_in_artifacts` | Artifact | Claude API calls from within artifacts | [36](#tool-card-36) |
+| `persistent_storage` | Artifact | Session-scoped key-value storage in artifacts | [37](#tool-card-37) |
+
 ---
 
 ## Chapter 12 — What Comes Next
 
-The tool ecosystem documented in this book is a snapshot of February 2026. It will change. Understanding the trajectory helps predict what's coming and where the opportunities lie.
+The tool ecosystem documented in this book is a snapshot of March 2026. It will change. Understanding the trajectory helps predict what's coming and where the opportunities lie.
 
 ### The MCP Convergence
 
 Anthropic's Model Context Protocol (MCP) is an open standard for connecting AI tools to external services. Many of the internal tools documented here — calendar, alarms, Google Drive — could theoretically be implemented as MCP servers. The strategic question is whether Anthropic will eventually expose these internal tools as MCP servers (enabling third-party access) or maintain the current separation between consumer tools and developer APIs.
 
-The platform architecture findings in v1.3 add nuance to this question. On the desktop app, `tool_search` already discovers MCP tools (Chrome, Filesystem) rather than consumer deferred tools — suggesting that MCP and internal tools already coexist in the same discovery mechanism, just on different platforms. This may be a transitional state or a deliberate architectural separation.
+The platform architecture findings add nuance to this question. On the desktop app, `tool_search` already discovers MCP tools (Chrome, Filesystem) rather than consumer deferred tools — suggesting that MCP and internal tools already coexist in the same discovery mechanism, just on different platforms. On the browser, `tool_search` now appears conditionally when MCP connectors are active. This may be a transitional state or a deliberate architectural separation.
 
 For developers, the practical implication is clear: understanding these internal tools gives you a blueprint for what to build with MCP. If Claude.ai can render inline charts, set alarms, and display interactive maps, your MCP-powered applications can do the same — you just need to build the tools yourself.
 
@@ -919,37 +1094,55 @@ The most immediate opportunity is using these tools more effectively in Claude.a
 
 The deeper opportunity is reading the signals. These tools reveal Anthropic's product strategy: investment in mobile-native device integration (alarms, timers), dependency on Google's ecosystem (Places, Drive, Calendar, Weather), incremental versioning rather than breaking changes (v0/v1 coexistence), rich interactive widgets (weather, recipes, maps) that push beyond text-only interfaces, and a clear trajectory toward Claude as a full operating system layer — scheduling, file management, communication, and now memory. Every tool in this book is a data point in that trajectory.
 
+### Ghost Tools
+
+Two tools have been discovered in schema definitions but are **not yet deployed** as of March 15, 2026:
+
+- **`gmail_send_draft`** — Would complete the Gmail write pipeline (create → send). Currently, `gmail_create_draft` creates drafts that must be sent manually from Gmail.
+- **`gmail_modify_thread`** — Would enable thread-level operations (labels, archive, etc.).
+
+These "ghost tools" suggest Anthropic's roadmap includes deeper Gmail integration. Monitor for deployment.
+
+### The Artifact Layer as an Emerging Platform
+
+v1.4 reveals that artifacts are evolving beyond display surfaces into a full execution platform. With `anthropic_api_in_artifacts` (Claude-in-Claude), `persistent_storage` (session-scoped data), and MCP endpoint access (Calendar, Gmail), React artifacts can now function as lightweight applications. This represents a potential convergence point: rather than adding more consumer tools, Anthropic may invest in making the artifact layer powerful enough to replace them.
+
 ### Open Questions
 
-Several questions remain unanswered and worth watching: Will MCP eventually replace internal tools, or will they coexist? Will `google_drive_fetch` expand to support Sheets and Slides? Will `chart_display_v0` gain more chart types (pie, histogram) or will artifacts remain the path for complex visualizations? Will the iOS-exclusive Reminders tools expand to Android and web? How will `tool_search` evolve as the toolkit grows — will it remain keyword-based or gain semantic matching? Will the platform fragmentation documented in this edition converge toward a unified tool set, or will each platform continue to diverge? The companion repository will track these as they develop.
+Several questions remain unanswered and worth watching: Will MCP eventually replace internal tools, or will they coexist? Will `google_drive_fetch` expand to support Sheets and Slides? Will the iOS-exclusive Reminders tools expand to Android and web? Will `gmail_send_draft` and `gmail_modify_thread` deploy? How will `tool_search` evolve as the toolkit grows — will it remain keyword-based or gain semantic matching? Will the platform fragmentation documented in this edition converge toward a unified tool set, or will each platform continue to diverge? Will the artifact execution layer expand to mobile? The companion repository will track these as they develop.
 
 ---
 
 ## Appendix A — Availability Matrix
 
-| Tool | Browser | Mobile | Desktop | API | Claude Code |
-| --- | --- | --- | --- | --- | --- |
-| `user_time_v0` | ❌ | ✅ (deferred) | ❌ | ❌ | ❌ |
-| `user_location_v0` | ❌ | ✅ (deferred) | ❌ | ❌ | ❌ |
-| `chart_display_v0` | ❌ | ✅ (deferred, ⚠️ crashes) | ❌ | ❌ | ❌ |
-| `ask_user_input_v0` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `message_compose_v1` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `alarm_create_v0` | ❌ | ✅ (deferred, native) | ❌ | ❌ | ❌ |
-| `timer_create_v0` | ❌ | ✅ (deferred, native) | ❌ | ❌ | ❌ |
-| Calendar suite (6) | ❌ | ✅ (deferred, needs connection) | ❌ | ❌ | ❌ |
-| `web_search` | ✅ | ✅ | ✅ | ✅* | ❌ |
-| `web_fetch` | ✅ | ✅ | ✅ | ✅* | ❌ |
-| `image_search` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `places_search` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `places_map_display_v0` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `fetch_sports_data` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Google Drive (2) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| `weather_fetch` | ✅ | ❌ | ✅ | ❌ | ❌ |
-| `recipe_display_v0` | ✅ | ❌ | ✅ | ❌ | ❌ |
-| `end_conversation` | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Memory tools (3) | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Computer Use (5) | ✅ | ❌ | ✅ | ❌ | Different |
-| `tool_search` | ❌ | ✅ (consumer) | ✅ (MCP only) | ❌ | ❌ |
+| Tool | Browser | Mobile (Android) | Mobile (iOS) | Desktop | API | Claude Code |
+| --- | --- | --- | --- | --- | --- | --- |
+| `user_time_v0` | ❌ | ✅ (always-loaded) | ✅ (always-loaded) | ❌ | ❌ | ❌ |
+| `user_location_v0` | ❌ | ✅ (always-loaded) | ✅ (always-loaded) | ❌ | ❌ | ❌ |
+| `chart_display_v0` | ❌ | ✅ (deferred, ⚠️ intermittent instability) | ✅ (deferred, ⚠️ intermittent instability) | ❌ | ❌ | ❌ |
+| `ask_user_input_v0` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `message_compose_v1` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `alarm_create_v0` | ❌ | ✅ (deferred, native) | ✅ (deferred, native) | ❌ | ❌ | ❌ |
+| `timer_create_v0` | ❌ | ✅ (deferred, native) | ✅ (deferred, native) | ❌ | ❌ | ❌ |
+| Calendar suite (6) | ❌ | ✅ (deferred, needs connection) | ✅ (deferred, needs connection) | ❌ | ❌ | ❌ |
+| iOS Reminders suite (5) | ❌ | ❌ | ✅ (deferred, iOS only) | ❌ | ❌ | ❌ |
+| `web_search` | ✅ | ✅ | ✅ | ✅ | ✅* | ❌ |
+| `web_fetch` | ✅ | ✅ | ✅ | ✅ | ✅* | ❌ |
+| `image_search` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `places_search` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `places_map_display_v0` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `fetch_sports_data` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Google Drive (2) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `weather_fetch` | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `recipe_display_v0` | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `end_conversation` | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Memory tools (3) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Computer Use (5) | ✅ | ❌ | ❌ | ✅ | ❌ | Different |
+| `tool_search` | ✅ (MCP only, conditional) | ✅ (consumer) | ✅ (consumer) | ✅ (MCP only) | ❌ | ❌ |
+| `visualize:show_widget` | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `gmail_create_draft` | ✅ (MCP) | ✅ (MCP) | ✅ (MCP) | ✅ (MCP) | ❌ | ❌ |
+| `anthropic_api_in_artifacts` | ✅ (React only) | ❌ | ❌ | ✅ (React only) | ❌ | ❌ |
+| `persistent_storage` | ✅ (React only) | ❌ | ❌ | ✅ (React only) | ❌ | ❌ |
 
 \* `web_search` exists in the API as `web_search_20250305` with different configuration. `web_fetch` is available server-side in the API. All other tools are Claude.ai-exclusive.
 
@@ -963,7 +1156,7 @@ This appendix documents the exact methodology used to discover and catalog every
 
 Using `tool_search` on the **Claude mobile app** with `limit=20`, the following queries were executed systematically: "user", "create display generate", "search fetch data memory notification", "audio image video file convert", "send message email slack reminder", "map place weather stock price translate". Each query's results were recorded, including tool names, parameter schemas, and descriptions.
 
-**Platform note:** This step is only reproducible on the Claude mobile app. On the browser, `tool_search` does not exist. On the desktop app, it discovers MCP tools instead.
+**Platform note:** This step is only reproducible on the Claude mobile app. On the browser, `tool_search` only discovers MCP tools (when connectors are active). On the desktop app, it discovers MCP tools instead.
 
 ### Step 2: Schema Extraction
 
@@ -1094,7 +1287,7 @@ Connectors enable tools that depend on external services. Available connectors:
 
 # TECHNICAL ANNEX — Detailed Tool Cards
 
-Each card includes: quick facts, overview, full parameter schema, a JSON call example, trigger scenarios, key gotchas, and platform availability. All response examples have been confirmed through empirical testing across three platforms.
+Each card includes: quick facts, overview, full parameter schema, a JSON call example, trigger scenarios, key gotchas, and platform availability. All response examples have been confirmed through empirical testing across three platforms. Tool Cards 1–28 from v1.3 have been updated where needed; Tool Cards 29–37 are new in v1.4.
 
 ---
 
@@ -1109,13 +1302,13 @@ Each card includes: quick facts, overview, full parameter schema, a JSON call ex
 | Category | Context |
 | Params | 0 |
 | Permission | No |
-| Platform | Mobile App only (deferred) |
+| Platform | Mobile App only (always-loaded) |
 | Docs | None |
 | Trigger phrases | "What time is it?" · "Current time in Tokyo?" · "Is it too late to call?" |
 
 #### Overview
 
-Returns current time in ISO 8601 with microsecond precision and UTC offset. See Chapter 3. Mobile only — on browser and desktop, Claude states the system date but cannot access local time.
+Returns current time in ISO 8601 with UTC offset. See Chapter 3. Mobile only — on browser and desktop, Claude states the system date but cannot access local time. **v1.4 correction:** This tool is always-loaded on mobile, not deferred as v1.3 stated.
 
 #### Parameters
 
@@ -1127,9 +1320,14 @@ This tool accepts no parameters.
 // Call (no parameters)
 {}
 
-// Response
+// Response (Android — microseconds, colon in offset)
 {
-  "current_time": "2026-02-14T15:30:45.123456+01:00"
+  "current_time": "2026-03-15T10:49:50.411154+01:00"
+}
+
+// Response (iOS — no microseconds, compact offset)
+{
+  "current_time": "2026-03-15T12:11:22+0100"
 }
 ```
 
@@ -1145,7 +1343,8 @@ This tool accepts no parameters.
 #### Watch Out
 
 - VPN has no effect — timezone comes from device, not IP
-- Microsecond precision but no caching — each call returns a fresh timestamp
+- Each call returns a fresh timestamp — no caching
+- **iOS vs Android:** Android includes microsecond precision and colon in offset (`+01:00`); iOS omits microseconds and uses compact offset (`+0100`)
 - Prerequisite for calendar tools (they need ISO 8601 with correct offset)
 - Browser/desktop fallback: Claude states system date but cannot return precise local time
 
@@ -1154,7 +1353,7 @@ This tool accepts no parameters.
 | Platform | Available | Notes |
 | --- | --- | --- |
 | Claude.ai (web) | ❌ | States system date only |
-| Claude mobile | ✅ | Device timezone, deferred via `tool_search` |
+| Claude mobile | ✅ | Device timezone, always-loaded |
 | Claude desktop | ❌ | States system date only |
 | Anthropic API | ❌ | |
 | Claude Code | ❌ | |
@@ -1172,13 +1371,13 @@ This tool accepts no parameters.
 | Category | Context |
 | Params | 1 |
 | Permission | Yes — two-layer device permission |
-| Platform | Mobile App only (deferred) |
+| Platform | Mobile App only (always-loaded) |
 | Docs | None |
 | Trigger phrases | "Restaurants near me?" · "Weather here?" · "How far to the airport?" |
 
 #### Overview
 
-User geolocation. The only tool requiring explicit permission. Returns coordinates and a reverse-geocoded address. Mobile only — on browser and desktop, this tool is absent and Claude asks for location manually. See Chapter 3.
+User geolocation. The only tool requiring explicit permission. Returns coordinates and a reverse-geocoded address. Mobile only — on browser and desktop, this tool is absent and Claude asks for location manually. **v1.4 correction:** This tool is always-loaded on mobile, not deferred as v1.3 stated. See Chapter 3.
 
 #### Parameters
 
@@ -1222,7 +1421,8 @@ User geolocation. The only tool requiring explicit permission. Returns coordinat
 - Result widget: pin icon, full street address, Google Maps thumbnail
 - Browser/desktop: tool absent — Claude asks user for city/area manually
 - **`accuracy` parameter has no observable effect** — "high" and "low" returned nearly identical coordinates in testing
-- **No `accuracy_meters` field** — the response includes `geocoded` address object instead
+- **iOS vs Android:** iOS adds `sub_locality` and `accuracy` (meters) fields to the response that Android lacks
+- **Implicit trigger unreliable** — "Where am I?" may not be sufficient; explicit invocation required
 - **Response includes reverse-geocoded address** with street, city, region, country, postal code
 
 #### Platform Availability
@@ -1230,7 +1430,7 @@ User geolocation. The only tool requiring explicit permission. Returns coordinat
 | Platform | Available | Notes |
 | --- | --- | --- |
 | Claude.ai (web) | ❌ | Absent — asks manually |
-| Claude mobile | ✅ | GPS, deferred via `tool_search` |
+| Claude mobile | ✅ | GPS, always-loaded |
 | Claude desktop | ❌ | Absent — asks manually |
 | Anthropic API | ❌ | |
 | Claude Code | ❌ | |
@@ -1248,13 +1448,13 @@ User geolocation. The only tool requiring explicit permission. Returns coordinat
 | Category | Visualization |
 | Params | 5 |
 | Permission | No |
-| Platform | Mobile App only (deferred) — ⚠️ crashes as of Feb 2026 |
+| Platform | Mobile App only (deferred) — ⚠️ intermittent instability as of Mar 2026 |
 | Docs | None |
 | Trigger phrases | "Plot my monthly expenses" · "Show a bar chart of..." · "Graph these numbers" |
 
 #### Overview
 
-Inline interactive charts: line, bar, scatter. Mobile only (deferred) but **currently crashes the app on all chart types** — confirmed across fresh chats and Project chats. On browser and desktop, Claude creates a React artifact with Recharts instead. See Chapter 5.
+Inline interactive charts: line, bar, scatter. Mobile only (deferred) with **intermittent instability** — crashes are state-dependent, not deterministic (v1.3 reported 100% crash rate; v1.4 testing showed intermittent behavior). On browser and desktop, Claude creates a React artifact with Recharts instead, or uses `visualize:show_widget` for inline charts. See Chapter 5.
 
 #### Parameters
 
@@ -1283,18 +1483,21 @@ Inline interactive charts: line, bar, scatter. Mobile only (deferred) but **curr
 
 #### Watch Out
 
-- **⚠️ App crashes on rendering** (tested Feb 15, 2026)
+- **⚠️ Intermittent instability** — crashes are state-dependent, not deterministic (updated Mar 2026)
+- **Non-functional parameters:** `format`, `min`, `max` are accepted but have no effect
+- **Functional parameters:** `color` (hex — e.g., `"#FF5733"`), `scale: "log"` (logarithmic)
+- **`values` type:** iOS accepts integers, not just strings as v1.3 documented
 - No SVG/PNG export — use a code artifact if user needs to save
-- Limited chart types (line, bar, scatter) — no pie, histogram, heatmap
-- Browser/desktop fallback: React artifact with Recharts
+- Limited chart types (line, bar, scatter) — for pie, histogram, heatmap, use `visualize:show_widget` (desktop/browser)
+- Browser/desktop fallback: React artifact with Recharts or `visualize:show_widget`
 
 #### Platform Availability
 
 | Platform | Available | Notes |
 | --- | --- | --- |
-| Claude.ai (web) | ❌ | Fallback: React artifact |
-| Claude mobile | ✅ (⚠️ crashes) | Deferred, currently broken |
-| Claude desktop | ❌ | Fallback: React artifact |
+| Claude.ai (web) | ❌ | Fallback: React artifact or `visualize:show_widget` |
+| Claude mobile | ✅ (⚠️ intermittent) | Deferred, intermittent instability |
+| Claude desktop | ❌ | Fallback: React artifact or `visualize:show_widget` |
 | Anthropic API | ❌ | |
 | Claude Code | ❌ | |
 
@@ -2056,7 +2259,7 @@ Web search returning top 10 results with snippets. The most frequently used tool
 | Tool | `web_fetch` |
 | Version | Unversioned |
 | Category | Search |
-| Params | 1 required + 4 optional (+ 3 internal) |
+| Params | 1 required + 5 optional (+ 3 internal) — 9 total |
 | Permission | No |
 | Platform | All |
 | Docs | API version documented |
@@ -2064,7 +2267,7 @@ Web search returning top 10 results with snippets. The most frequently used tool
 
 #### Overview
 
-Fetches full webpage content by URL. Used after `web_search` or with user-provided URLs.
+Fetches full webpage content by URL. Used after `web_search` or with user-provided URLs. v1.4 adds the `html_extraction_method` parameter (v1.3 documented 8 params; correct count is 9).
 
 #### Parameters
 
@@ -2075,6 +2278,7 @@ Fetches full webpage content by URL. Used after `web_search` or with user-provid
 | `web_fetch_pdf_extract_text` | boolean | No | If true, extract text from PDFs instead of raw bytes |
 | `allowed_domains` | array | No | Only fetch URLs from these domains |
 | `blocked_domains` | array | No | Never fetch URLs from these domains |
+| `html_extraction_method` | string | No | `"markdown"` or `"traf"` — controls how HTML is converted to text |
 
 *Additional internal parameters exist (`is_zdr`, `web_fetch_rate_limit_dark_launch`, `web_fetch_rate_limit_key`) but are operational and not user-relevant.*
 
@@ -2092,6 +2296,7 @@ Fetches full webpage content by URL. Used after `web_search` or with user-provid
 - JavaScript-heavy sites may return minimal content
 - URLs must include scheme (`https://`)
 - Rate-limited on repeated fetches
+- **⚠️ `html_extraction_method`: use `markdown`, not `traf`** — `traf` can fail completely with "Internal fetch error" on complex sites. `markdown` is significantly more robust. This is not just a style preference — it is a functional reliability difference
 
 #### Platform Availability
 
@@ -2466,14 +2671,14 @@ Fetches full Google Doc contents by document ID. Batch support via array. Google
 
 #### Overview
 
-Persistent memory for facts about the user. Four commands: `view`, `add`, `remove`, `replace`. Works for **facts** not **behaviors**. 30 edits max, 200 chars each.
+Persistent memory for facts about the user. Four commands: `view`, `add`, `remove`, `replace`. Works for **facts** not **behaviors**. 30 edits max, 500 chars each (client-side validation).
 
 #### Parameters
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
 | `command` | string | Yes | `"view"`, `"add"`, `"remove"`, `"replace"` |
-| `control` | string | For `add` | Memory text (max 200 chars — server-enforced, schema says 500) |
+| `control` | string | For `add` | Memory text (max 500 chars — client-side validation) |
 | `line_number` | integer | For `remove`/`replace` | Line number (1-indexed) |
 | `replacement` | string | For `replace` | New text |
 
@@ -2490,8 +2695,8 @@ Persistent memory for facts about the user. Four commands: `view`, `add`, `remov
 #### Watch Out
 
 - **Facts not behaviors**: "User is a vegetarian" works; "Always suggest vegetarian options" doesn't
-- 30 edit limit — be concise; Claude rewrites verbose inputs
-- **Hard limit: 200 characters per edit** — confirmed by testing. The parameter schema advertises a 500-character `maxLength` but the server enforces 200. Edits of 201+ characters return "Memory is too long"
+- **30 edit limit** — the binding constraint in practice. Be concise; Claude rewrites verbose inputs
+- **500 characters per edit** — client-side validation. Edits exceeding 500 characters return "String should have at most 500 characters." v1.3 incorrectly stated a 200-character server-enforced limit — the actual limit is 500, confirmed cross-surface in v1.4. The limit may vary by tier or build
 - Edits permanent until explicitly removed
 - Project-scoped: memories in one Project don't transfer to another
 
@@ -2620,7 +2825,7 @@ Time-based chat retrieval. 1–20 chats per call, chronological or reverse. Pagi
 | Category | Meta |
 | Params | 2 |
 | Permission | No |
-| Platform | Mobile (consumer tools) · Desktop (MCP tools only) · Browser: absent |
+| Platform | Mobile (consumer tools) · Desktop (MCP tools only) · Browser (MCP only, conditional — requires active connectors) |
 | Docs | None |
 | Trigger phrases | Called internally when Claude needs a deferred tool · "What tools do you have?" |
 
@@ -2643,10 +2848,10 @@ The meta-tool: discovers other tools by keyword. Returns tool names with full pa
 
 #### Watch Out
 
-- **Browser:** Does not exist — no deferred loading system
+- **Browser:** Conditionally available — appears only when MCP connectors (Google Calendar, Gmail) are active. Returns MCP tools only with `Provider:tool_name` namespace prefix (e.g., "Google Calendar:gcal_list_calendars"). Without active connectors, `tool_search` does not exist on browser
 - **Desktop App:** Exists but only discovers MCP tools (Chrome + Filesystem), not consumer deferred tools. With MCP active, it returns **all 32 MCP tools regardless of query** — it behaves as a "load everything" operation rather than a filtered search. Query keywords only affect ordering, not which tools appear
-- **Mobile App:** Exists and discovers 11 consumer deferred tools (the ones documented in this book)
-- Keyword-based with **fuzzy matching** — the same query may return different results across sessions. Tools bleed across unrelated queries, and some tools may require specific keywords to surface (e.g., `user_time_v0` may not appear for "user" but does for "time clock current")
+- **Mobile App:** Exists and discovers consumer deferred tools. Note: `user_time_v0` and `user_location_v0` are always-loaded and bypass `tool_search` entirely
+- Keyword-based with **fuzzy matching** — the same query may return different results across sessions. Tools bleed across unrelated queries
 - Can't find tools with unexpected names
 - Deferred tools appear here; always-loaded tools do not
 - Returns empty for always-loaded tools — expected, not an error
@@ -2656,7 +2861,7 @@ The meta-tool: discovers other tools by keyword. Returns tool names with full pa
 
 | Platform | Available | Notes |
 | --- | --- | --- |
-| Claude.ai (web) | ❌ | Does not exist |
+| Claude.ai (web) | ✅ (conditional) | MCP tools only, requires active connectors |
 | Claude mobile | ✅ | Discovers consumer deferred tools |
 | Claude desktop | ✅ | Discovers MCP tools only |
 | Anthropic API | ❌ | |
@@ -2891,6 +3096,620 @@ This tool accepts no parameters.
 
 ---
 
+### Tool Card 29
+
+## `reminder_list_search_v0`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `reminder_list_search_v0` |
+| Version | v0 |
+| Category | Reminders |
+| Params | 1 |
+| Permission | Reminders access required |
+| Platform | iOS only (deferred via `tool_search`) |
+| Docs | None |
+| Trigger phrases | Called internally when Claude needs to identify Reminders lists |
+
+#### Overview
+
+Lists available iOS Reminders lists and their IDs. First call in any Reminders workflow — equivalent to `calendar_search_v0` for the calendar suite. The schema description notes: "The number of lists is usually small so filter parameters are rarely necessary."
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `searchText` | string | No | Filter lists by name |
+
+#### Example Call
+
+```json
+// Call (no filter — returns all lists)
+{}
+
+// Response (confirmed — locale-aware list names)
+{
+  "status": "success",
+  "lists": [
+    {"id": "3C8C2A71-84BF-4C87-8EFD-BB4827650D15", "name": "Promemoria"}
+  ]
+}
+```
+
+#### Watch Out
+
+- iOS only — confirmed absent on Android (zero hits in Session 1+2 sweeps)
+- Returns list IDs needed for `reminder_create_v0` (the `listId` parameter)
+- **Locale-aware:** Default list name returns in device language ("Promemoria" on Italian iOS, "Reminders" on English)
+- List IDs are UUIDs (e.g., `"3C8C2A71-84BF-4C87-8EFD-BB4827650D15"`), not numeric strings like calendar IDs
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ❌ | Tool absent |
+| Claude mobile (Android) | ❌ | Tool absent |
+| Claude mobile (iOS) | ✅ | Deferred |
+| Claude desktop | ❌ | Tool absent |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 30
+
+## `reminder_create_v0`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `reminder_create_v0` |
+| Version | v0 |
+| Category | Reminders |
+| Params | 1 (nested) |
+| Permission | Reminders access required |
+| Platform | iOS only (deferred via `tool_search`) |
+| Docs | None |
+| Trigger phrases | "Remind me to..." · "Set a reminder for..." · "Add to my shopping list" |
+
+#### Overview
+
+Creates one or more reminders in iOS Reminders. Uses a nested structure: the top-level `reminderLists` array contains list objects, each containing a `reminders` array with the actual reminder items. Omit `listId` to use the device's default list.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `reminderLists` | array | Yes | Array of list objects (see nested schema below) |
+
+**Each list object in `reminderLists`:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `listId` | string | No | Target list ID from `reminder_list_search_v0`; omit for default list |
+| `reminders` | array | Yes | Array of reminder objects |
+
+**Each reminder object:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | string | Yes | Reminder title |
+| `dueDate` | string | No | ISO 8601 date/time |
+| `dueDateIncludesTime` | boolean | No | Whether `dueDate` includes a specific time |
+| `notes` | string | No | Additional notes |
+| `priority` | string | No | `"none"` \| `"low"` \| `"medium"` \| `"high"` |
+| `url` | string | No | Associated URL |
+| `completionDate` | string | No | ISO 8601; set to mark as already completed |
+| `alarms` | array | No | Array of alarm objects (see below) |
+| `recurrence` | object | No | Recurrence rules (see below) |
+
+**Each alarm object:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `type` | string | Yes | `"absolute"` \| `"relative"` |
+| `date` | string | No | ISO 8601 — for absolute alarms |
+| `secondsBefore` | integer | No | Seconds before due date — for relative alarms |
+
+**Recurrence object** (all three top-level fields required — same pattern as `event_create_v0`):
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `rrule` | string | Yes | RRULE string (e.g., `"FREQ=WEEKLY;BYDAY=MO"`) |
+| `humanReadableFrequency` | string | Yes | Human-readable description |
+| `frequency` | string | Yes | Frequency keyword |
+| `interval` | integer | No | Repeat interval |
+| `daysOfWeek` | array | No | Days of the week |
+| `dayOfMonth` | integer | No | Day of the month |
+| `position` | integer | No | Position qualifier |
+| `months` | array | No | Months |
+| `end` | object | No | End condition |
+
+#### Example Call
+
+```json
+// Call
+{
+  "reminderLists": [
+    {
+      "reminders": [
+        {
+          "title": "Test v1.4",
+          "dueDate": "2026-03-16T10:00:00+01:00",
+          "dueDateIncludesTime": true
+        }
+      ]
+    }
+  ]
+}
+
+// Response (confirmed)
+{
+  "reminder_lists": [{
+    "is_default_list": true,
+    "items": [{"id": "847F428A-801B-43B0-92DB-223902992914", "index": 0, "title": "Test v1.4"}],
+    "list_id": "3C8C2A71-84BF-4C87-8EFD-BB4827650D15",
+    "list_name": "Promemoria"
+  }],
+  "status": "success"
+}
+```
+
+**Response fields:** `status`, `reminder_lists` array containing: `is_default_list` (boolean), `list_id`, `list_name` (locale-aware), `items` array with `id` (UUID), `index`, `title` per created reminder.
+
+#### Watch Out
+
+- iOS only — confirmed absent on Android
+- **Alarms use `secondsBefore`** — not `minutesBefore` as in calendar tools. This is the most important gotcha when working with both tool suites
+- **Recurrence requires all three fields** (`rrule`, `humanReadableFrequency`, `frequency`) — identical pattern to `event_create_v0`
+- **`is_default_list`** appears in response — not documented in DMontgomery40's original issues
+- **Locale-aware:** `list_name` returns in device language ("Promemoria" on Italian iOS)
+- **IDs are UUIDs** (e.g., `"847F428A-801B-43B0-92DB-223902992914"`), not numeric strings like calendar event IDs
+- Note: DMontgomery40's GitHub issue #2 has a typo "reminders_create_v0" — correct name is `reminder_create_v0` (singular)
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ❌ | Tool absent |
+| Claude mobile (Android) | ❌ | Tool absent |
+| Claude mobile (iOS) | ✅ | Deferred |
+| Claude desktop | ❌ | Tool absent |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 31
+
+## `reminder_search_v0`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `reminder_search_v0` |
+| Version | v0 |
+| Category | Reminders |
+| Params | 7 |
+| Permission | Reminders access required |
+| Platform | iOS only (deferred via `tool_search`) |
+| Docs | None |
+| Trigger phrases | "What's on my reminders?" · "Show my shopping list" · "Any reminders for today?" |
+
+#### Overview
+
+Searches existing iOS reminders by text, status, date range, or list. Returns reminder IDs needed for update and delete operations. This is the gateway tool for the search-then-act pattern — you must call it before `reminder_update_v0` or `reminder_delete_v0`.
+
+#### Parameters
+
+| Parameter | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `searchText` | string | No | — | Search in titles and notes |
+| `status` | string | No | `"incomplete"` | `"incomplete"` \| `"completed"` |
+| `dateFrom` | string | No | — | ISO 8601 start of range |
+| `dateTo` | string | No | — | ISO 8601 end of range |
+| `listId` | string | No | — | Target list ID |
+| `listName` | string | No | — | Target list name (used if `listId` not provided) |
+| `limit` | integer | No | 100 | Maximum results |
+
+#### Example Call
+
+```json
+// Call — search for incomplete reminders due today
+{
+  "dateFrom": "2026-03-16T00:00:00+01:00",
+  "dateTo": "2026-03-16T23:59:59+01:00",
+  "status": "incomplete"
+}
+```
+
+#### Watch Out
+
+- iOS only — confirmed absent on Android
+- Returns IDs (UUIDs) required for `reminder_update_v0` and `reminder_delete_v0`
+- Follows the same search-then-act pattern as the calendar suite (`event_search_v0` → `event_update_v0`)
+- **`listName` is a convenience fallback** — `listId` takes precedence if both are provided
+- Default `status` is `"incomplete"` — to find completed reminders, you must explicitly set `status: "completed"`
+- Default `limit` is 100 — generous but worth noting for lists with many items
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ❌ | Tool absent |
+| Claude mobile (Android) | ❌ | Tool absent |
+| Claude mobile (iOS) | ✅ | Deferred |
+| Claude desktop | ❌ | Tool absent |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 32
+
+## `reminder_update_v0`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `reminder_update_v0` |
+| Version | v0 |
+| Category | Reminders |
+| Params | 1 (array) |
+| Permission | Reminders access required |
+| Platform | iOS only (deferred via `tool_search`) |
+| Docs | None |
+| Trigger phrases | "Change my reminder to..." · "Update the shopping list reminder" · "Mark it as done" |
+
+#### Overview
+
+Updates one or more existing iOS reminders by ID. Requires a prior `reminder_search_v0` call to obtain the reminder ID. Can modify any field including moving reminders between lists.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `reminderUpdates` | array | Yes | Array of update objects (see below) |
+
+**Each update object:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | string | Yes | Reminder ID (UUID) from `reminder_search_v0` |
+| `title` | string | No | New title |
+| `notes` | string | No | New notes |
+| `url` | string | No | New URL |
+| `dueDate` | string | No | ISO 8601; set to `null` to remove due date |
+| `dueDateIncludesTime` | boolean | No | Whether `dueDate` includes a specific time |
+| `priority` | string | No | `"none"` \| `"low"` \| `"medium"` \| `"high"` |
+| `listId` | string | No | Move to a different list |
+| `completionDate` | string | No | ISO 8601 to mark complete; `null` to mark incomplete |
+| `alarms` | array | No | New alarms (empty array removes all alarms) |
+| `recurrence` | object | No | Recurrence rules (same schema as `reminder_create_v0`) |
+
+#### Example Call
+
+```json
+// Call — mark a reminder as completed and change its priority
+{
+  "reminderUpdates": [
+    {
+      "id": "847F428A-801B-43B0-92DB-223902992914",
+      "priority": "high",
+      "completionDate": "2026-03-16T10:30:00+01:00"
+    }
+  ]
+}
+```
+
+#### Watch Out
+
+- iOS only — confirmed absent on Android
+- **Requires ID from `reminder_search_v0`** — no title-based targeting
+- Follows the search-then-act pattern (same as `event_update_v0` for calendar)
+- **Can move reminders between lists** by setting `listId` to a different list's UUID
+- **`null` values are meaningful:** setting `dueDate: null` removes the due date; setting `completionDate: null` marks as incomplete
+- **Empty `alarms` array removes all alarms** — distinct from omitting the field (which leaves alarms unchanged)
+- Can update multiple reminders in one call
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ❌ | Tool absent |
+| Claude mobile (Android) | ❌ | Tool absent |
+| Claude mobile (iOS) | ✅ | Deferred |
+| Claude desktop | ❌ | Tool absent |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 33
+
+## `reminder_delete_v0`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `reminder_delete_v0` |
+| Version | v0 |
+| Category | Reminders |
+| Params | 1 (array) |
+| Permission | Reminders access required |
+| Platform | iOS only (deferred via `tool_search`) |
+| Docs | None |
+| Trigger phrases | "Delete that reminder" · "Remove the shopping list reminder" |
+
+#### Overview
+
+Deletes one or more iOS reminders by ID. Requires a prior `reminder_search_v0` call to obtain the reminder ID.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `reminderDeletions` | array | Yes | Array of deletion objects (see below) |
+
+**Each deletion object:**
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | string | Yes | Reminder ID (UUID) from `reminder_search_v0` |
+| `title` | string | No | Reminder title — optional but recommended for UI display |
+
+#### Example Call
+
+```json
+// Call
+{
+  "reminderDeletions": [
+    {
+      "id": "847F428A-801B-43B0-92DB-223902992914",
+      "title": "Test v1.4"
+    }
+  ]
+}
+```
+
+#### Watch Out
+
+- iOS only — confirmed absent on Android
+- **Requires ID from `reminder_search_v0`** — no title-based targeting
+- **`title` is optional but recommended** — helps Claude display a meaningful confirmation message to the user
+- Destructive operation — Claude should confirm before deleting
+- Can delete multiple reminders in one call
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ❌ | Tool absent |
+| Claude mobile (Android) | ❌ | Tool absent |
+| Claude mobile (iOS) | ✅ | Deferred |
+| Claude desktop | ❌ | Tool absent |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 34
+
+## `visualize:show_widget`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `visualize:show_widget` |
+| Version | N/A (not in tool layer) |
+| Category | Visualization |
+| Params | 4 |
+| Permission | No |
+| Platform | Desktop + Browser only |
+| Docs | None |
+| Trigger phrases | "Show me a pie chart" · "Create a heatmap" · "Visualize this data" |
+
+#### Overview
+
+Inline Chart.js widget rendering. Architecturally separate from the tool/deferred layer — does not appear in `tool_search`. Supports full Chart.js capabilities including pie, donut, histogram, heatmap, and bubble charts. Renders inline in the chat stream, not in the artifact sidebar. See Chapter 5.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `widget_code` | string | Yes | Full Chart.js / HTML / JavaScript code |
+| `title` | string | Yes | Widget title displayed above the visualization |
+| `loading_messages` | array | No | Messages shown while the widget loads |
+| `i_have_seen_read_me` | boolean | Yes | Acknowledgment flag (must be `true`) |
+
+Supported module types: `diagram`, `mockup`, `interactive`, `data_viz`, `art`, `chart`.
+
+#### Example Call
+
+```json
+{
+  "widget_code": "<canvas id='chart'></canvas><script>new Chart(document.getElementById('chart'), {type:'pie', data:{labels:['A','B','C'], datasets:[{data:[30,50,20]}]}});</script>",
+  "title": "Distribution",
+  "i_have_seen_read_me": true
+}
+```
+
+#### Watch Out
+
+- **Not in the tool/deferred layer** — architecturally separate from `tool_search`-discoverable tools
+- Mutually exclusive with `chart_display_v0` by platform: `chart_display_v0` on mobile, `visualize:show_widget` on desktop/browser
+- Supports **full Chart.js** — dramatically broader than `chart_display_v0` (line/bar/scatter only)
+- Renders **inline** — not in artifact sidebar
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ✅ | Inline rendering |
+| Claude mobile | ❌ | Absent |
+| Claude desktop | ✅ | Inline rendering |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 35
+
+## `gmail_create_draft`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `gmail_create_draft` |
+| Version | N/A (MCP connector tool) |
+| Category | Email |
+| Params | 7 |
+| Permission | Gmail connector required |
+| Platform | All (when Gmail connector active) |
+| Docs | None |
+| Trigger phrases | "Draft an email to..." · "Create a Gmail draft" |
+
+#### Overview
+
+Creates a Gmail draft via the MCP Gmail connector. The only write tool in the official Gmail connector as of March 2026. Drafts appear in Gmail's Drafts folder and must be sent manually.
+
+#### Parameters
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `to` | string | Yes | Recipient email address |
+| `body` | string | Yes | Email body content |
+| `subject` | string | Yes | Email subject line |
+| `cc` | string | No | CC recipients |
+| `bcc` | string | No | BCC recipients |
+| `contentType` | string | No | `"text/plain"` or `"text/html"` |
+| `threadId` | string | No | Thread ID for reply drafts |
+
+#### Example Call
+
+```json
+{
+  "to": "colleague@example.com",
+  "subject": "Project update",
+  "body": "Hi, here's the latest update on the project...",
+  "contentType": "text/plain"
+}
+```
+
+#### Response
+
+```json
+{
+  "draftId": "r-1234567890",
+  "messageId": "1234567890abcdef",
+  "threadId": "1234567890abcdef"
+}
+```
+
+#### Watch Out
+
+- Requires Gmail connector active in Settings → Connectors
+- `contentType: "text/html"` is accepted by the API and HTML is stored in the draft, but visual rendering requires opening the draft in Gmail
+- **Ghost tools:** `gmail_send_draft` and `gmail_modify_thread` exist in schema definitions but are not yet deployed as of March 2026
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ✅ | Requires Gmail connector |
+| Claude mobile | ✅ | Requires Gmail connector |
+| Claude desktop | ✅ | Requires Gmail connector |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 36
+
+## `anthropic_api_in_artifacts`
+
+| Property | Detail |
+| --- | --- |
+| Tool | `anthropic_api_in_artifacts` |
+| Version | N/A (artifact capability) |
+| Category | Artifact |
+| Params | N/A (code-level API) |
+| Permission | "AI-powered artifacts" toggle required |
+| Platform | Desktop + Browser (React artifacts only) |
+| Docs | None |
+| Trigger phrases | "Create an AI chatbot artifact" · "Make a Claude-powered tool" |
+
+#### Overview
+
+React artifacts can call the Anthropic API directly without an API key. The runtime injects authentication at the infrastructure level. This enables "Claude-in-Claude" patterns — artifacts that contain working AI chatbots, content generators, or analysis tools. See Chapter 9.
+
+#### Key Findings
+
+- HTTP 200 confirmed on both Desktop and Browser React artifacts
+- Model: `claude-sonnet-4-5-20250929`
+- HTML artifacts blocked by CSP (`TypeError: Failed to fetch`)
+- Response includes: `cache_creation` object (`ephemeral_5m`, `ephemeral_1h`), `service_tier`, `inference_geo`
+- Controlled by "AI-powered artifacts" toggle in Settings → Capabilities
+
+> **v1.4 correction:** v1.3 implied this was Desktop-only. It works on Browser React artifacts too.
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ✅ | React artifacts only |
+| Claude mobile | ❌ | |
+| Claude desktop | ✅ | React artifacts only |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
+### Tool Card 37
+
+## `persistent_storage` (`window.storage`)
+
+| Property | Detail |
+| --- | --- |
+| Tool | `persistent_storage` / `window.storage` |
+| Version | N/A (artifact capability) |
+| Category | Artifact |
+| Params | N/A (code-level API) |
+| Permission | No |
+| Platform | Desktop + Browser (React artifacts only) |
+| Docs | None |
+| Trigger phrases | N/A — used within artifact code |
+
+#### Overview
+
+> **⚠️ CRITICAL: SESSION-SCOPED ONLY.** Despite the name "persistent_storage," data does **not** persist across sessions. Data stored via `window.storage` is available within a single chat session (across artifact re-renders) but is **destroyed when the session closes**. Attempting to retrieve data in a new chat returns: "Internal server error while processing action." Project context makes no difference — storage is session-scoped regardless.
+
+React artifacts have access to a `window.storage` object with four methods:
+
+| Method | Description |
+| --- | --- |
+| `window.storage.set(key, value, shared)` | Store a value |
+| `window.storage.get(key, shared)` | Retrieve a value |
+| `window.storage.delete(key, shared)` | Delete a value |
+| `window.storage.list(shared)` | List all keys |
+
+The `shared` parameter controls scope: `false` for personal storage, `true` for shared storage. Backend uses gRPC/protobuf (`StorageSetResponse`/`StorageGetResponse`). Maximum 5MB per key.
+
+#### Watch Out
+
+- **⚠️ SESSION-SCOPED ONLY** — the name "persistent_storage" is misleading. Data is destroyed on session close
+- **React artifacts only** — `window.storage` is `undefined` in HTML artifacts
+- Cross-session GET returns "Internal server error while processing action"
+- Project context does NOT make storage project-scoped — still session-scoped
+- Personal (`shared=false`) and shared (`shared=true`) scopes available
+- 5MB per key limit
+
+#### Platform Availability
+
+| Platform | Available | Notes |
+| --- | --- | --- |
+| Claude.ai (web) | ✅ | React artifacts only, session-scoped |
+| Claude mobile | ❌ | |
+| Claude desktop | ✅ | React artifacts only, session-scoped |
+| Anthropic API | ❌ | |
+| Claude Code | ❌ | |
+
+---
+
 ## N1AI — AI That Works for People
 
 This book is published by N1AI, a community-driven AI consultancy founded on a simple principle: AI should work for people, not the other way around.
@@ -2921,11 +3740,11 @@ In the AI space, Francesco builds tools and writes research that fills gaps othe
 
 He is an active speaker on the European AI circuit — Claude Code Meetup Milano, AI Tinkerers Milano, Aperitivo AI — and attended the Anthropic Builder Summit in London (October 2025). He has active CFPs submitted for AI Engineer Europe 2026 and PyTorch Conference Europe 2026.
 
-Connect: [linkedin.com/in/francesco-moretto](https://www.linkedin.com/in/francesco-moretto)
+Connect: [linkedin.com/in/francesco-moretto](https://linkedin.com/in/francesco-moretto)
 GitHub: [github.com/frmoretto](https://github.com/frmoretto)
-N1AI: [n1ai.co](https://www.n1ai.co) · [github.com/n1-ai](https://github.com/n1-ai)
+N1AI: [n1ai.co](https://n1ai.co) · [github.com/n1-ai](https://github.com/n1-ai)
 This book: [github.com/n1-ai/claude-hidden-toolkit](https://github.com/n1-ai/claude-hidden-toolkit)
 
 ---
 
-*Claude's Hidden Toolkit — Edition 1.3 — February 2026 — CC BY 4.0 — Francesco Marinoni Moretto, N1AI*
+*Claude's Hidden Toolkit — Edition 1.4 — March 2026 — CC BY 4.0 — Francesco Marinoni Moretto, N1AI*

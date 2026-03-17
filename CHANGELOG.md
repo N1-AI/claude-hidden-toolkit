@@ -4,6 +4,37 @@ All notable changes to Claude's Hidden Toolkit are documented here.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/). Editions are tagged by version.
 
+## [1.4] — 2026-03-15
+
+### Added
+- **9 new tool cards** (Cards 29–37): `reminder_list_search_v0`, `reminder_create_v0`, `reminder_search_v0`, `reminder_update_v0`, `reminder_delete_v0` (iOS Reminders CRUD suite), `visualize:show_widget`, `gmail_create_draft`, `anthropic_api_in_artifacts`, `persistent_storage`
+- **Artifact execution layer section** (Chapter 9) — documents Claude-inside-Claude architecture: `anthropic_api_in_artifacts` (authenticated API calls from artifacts without API key), `persistent_storage` (session-scoped `window.storage`), MCP endpoint access from React artifacts
+- **MCP connector state** as an architectural variable (Chapter 2) — connecting/disconnecting Gmail or Google Calendar changes the always-loaded tool pool
+- **Project context behavior** section — confirmed Projects do not change tool behavior
+- **Ghost tools** section (Chapter 12) — `gmail_send_draft` and `gmail_modify_thread` exist in schema but are not deployed
+- **Contributors section** — credited anonymous security researcher (11 findings) and DMontgomery40 (iOS Reminders suite)
+- **iOS vs Android differences** — `user_location_v0` returns richer response on iOS (sub_locality, accuracy fields); `user_time_v0` timestamp format differs (no microseconds on iOS)
+
+### Changed (Corrections)
+- **`user_time_v0` and `user_location_v0`**: reclassified from deferred to **always-loaded** on mobile — MCP connector state is irrelevant (v1.3 error)
+- **`memory_user_edits`**: limit corrected from 200 characters (server-enforced) to **500 characters** (client-side validation). The limit may vary by tier or build
+- **`chart_display_v0`**: crash status downgraded from deterministic (100%) to **intermittent/state-dependent**. Tool is always deferred on mobile, not first-class
+- **`tool_search` on browser**: corrected from "does not exist" to **conditionally available** when MCP connectors are active, returning tools with `Provider:tool_name` prefix
+- **`window.storage`**: reframed from "persistent" to **session-scoped** — data is destroyed when session closes, does not persist across chats even within the same Project
+- **`anthropic_api_in_artifacts`**: corrected from Desktop-only to working on **both Desktop and Browser** React artifacts (HTML artifacts blocked by CSP)
+- **`web_fetch`**: corrected from 8 to **9 parameters** (added `html_extraction_method`)
+- **`bash_tool`**: corrected from 1 to **2 parameters** (added required `description`)
+- **`str_replace`**: corrected from 3 to **4 parameters** (added required `description`)
+- **`chart_display_v0` values parameter**: accepts integers on iOS (v1.3 documented strings only)
+- **Calendar tools**: always-loaded when MCP Calendar connector active (not always deferred)
+- **Platform matrix**: updated to reflect iOS as distinct surface with 5 additional Reminders tools
+- **`visualize:show_widget` vs `chart_display_v0`**: documented as mutually exclusive by surface — `chart_display_v0` mobile only, `show_widget` desktop/browser only
+
+### Removed
+- Deterministic crash claim for `chart_display_v0`
+- "tool_search absent on browser" claim
+- 200-character server-enforced limit claim for `memory_user_edits`
+
 ## [1.3] — 2026-02-16
 
 ### Added

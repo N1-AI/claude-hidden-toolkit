@@ -13,6 +13,7 @@ If you discover a tool behavior that could be exploited to:
 - Exfiltrate sensitive information via tool parameters or responses
 - Manipulate tool behavior through prompt injection in tool inputs
 - Escalate permissions beyond intended scope
+- Abuse the artifact execution layer (`anthropic_api_in_artifacts`, `persistent_storage`, MCP endpoints) for unintended access
 
 **Please report it responsibly:**
 
@@ -42,5 +43,6 @@ If you discover a tool behavior that could be exploited to:
 
 | Version | Supported |
 |---------|-----------|
-| 1.3     | Yes       |
-| < 1.3   | No — please reference the latest edition |
+| 1.4     | Yes       |
+| 1.3     | No — please reference the latest edition |
+| < 1.3   | No |
