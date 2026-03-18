@@ -66,7 +66,7 @@ Anthropic's official docs cover the API. But the consumer product — claude.ai 
 This project is maintained by Francesco Marinoni Moretto and has benefited from external contributions:
 
 - **An independent security researcher** (anonymous by request) — 11 findings including the artifact API discovery, session-scoped storage, MCP endpoints in artifacts, skill filesystem topology, and egress proxy JWT architecture
-- **DMontgomery40** ([GitHub](https://github.com/DMontgomery40)) — Documented the complete iOS Reminders CRUD suite (5 tools) via GitHub issues
+- **David Montgomery** ([GitHub](https://github.com/DMontgomery40) · [LinkedIn](https://www.linkedin.com/in/david-montgomery-5a07656b/)) — Documented the complete iOS Reminders CRUD suite (5 tools) via GitHub issues
 
 ## Prior Art & Credits
 
