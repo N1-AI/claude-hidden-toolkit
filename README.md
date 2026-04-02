@@ -4,6 +4,8 @@
 
 *37 tools. Zero official documentation. Fully reverse-engineered.*
 
+> ⚠️ **Context regarding the March 31, 2026 Claude Code Leak:** > Following the accidental npm release of the `cli.js.map` source map, developers analyzing the 512,000 lines of leaked TypeScript will find that the internal orchestration logic, deferred tool-loading mechanisms, and feature flags closely mirror the black-box capabilities documented in this repository. This guide serves as a practical, client-side reference to the architectural behaviors exposed in the leak.
+
 ---
 
 ## What Is This?
