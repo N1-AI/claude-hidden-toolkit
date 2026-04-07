@@ -148,7 +148,7 @@ This book has a companion GitHub repository at [github.com/n1-ai/claude-hidden-t
 
 **What changed in v1.3:** Edition 1.3 added cross-platform testing results that fundamentally changed the architecture picture. Three new tools (`weather_fetch`, `recipe_display_v0`, `end_conversation`) were documented, 15 existing tool cards were updated with platform-specific corrections, and a new Settings & Connectors reference was added as Appendix D.
 
-**What changed in v1.4:** This edition adds 9 new tools (37 total), corrects 13 factual errors from v1.3, and introduces two external contributors. Key corrections: `user_time_v0` and `user_location_v0` are **always-loaded** on mobile (not deferred as v1.3 stated); `memory_user_edits` accepts 500 characters (not 200); `chart_display_v0` crashes are intermittent (not deterministic); `window.storage` is **session-scoped** (not persistent across sessions); `anthropic_api_in_artifacts` works on Browser (not Desktop-only); `tool_search` exists on Browser with MCP connectors active. New tool cards include: 5 iOS Reminders tools, `visualize:show_widget`, `gmail_create_draft`, `anthropic_api_in_artifacts`, and `persistent_storage`. New sections cover MCP connector state as an architectural variable, Project context behavior, and the artifact execution layer.
+**What changed in v1.4:** This edition adds 9 new tools (37 total), corrects 13 factual errors from v1.3, and introduces two external contributors. Key corrections: `user_time_v0` and `user_location_v0` are **always-loaded** on mobile (not deferred as v1.3 stated); `memory_user_edits` accepts 500 characters (not 200); `chart_display_v0` crashes are intermittent (not deterministic); `window.storage` is **session-scoped during development** but **persistent for published artifacts** (Anthropic confirmed April 2026); `anthropic_api_in_artifacts` works on Browser (not Desktop-only); `tool_search` exists on Browser with MCP connectors active. New tool cards include: 5 iOS Reminders tools, `visualize:show_widget`, `gmail_create_draft`, `anthropic_api_in_artifacts`, and `persistent_storage`. New sections cover MCP connector state as an architectural variable, Project context behavior, and the artifact execution layer.
 
 ---
 
@@ -218,7 +218,7 @@ This means Android distinguishes between native deferred tools (always available
 Testing in v1.4 confirmed that Claude Projects do not affect tool behavior:
 
 - `tool_search` returns the identical tool pool inside and outside a Project
-- `window.storage` remains session-scoped inside a Project (not project-scoped)
+- `window.storage` behavior is identical inside a Project (persistence is publish-gated, not project-scoped)
 - `anthropic_api_in_artifacts` works identically inside a Project
 - `chart_display_v0` behavior is identical inside a Project
 
@@ -878,20 +878,24 @@ React artifacts can call the Anthropic API directly — without an API key. The 
 Key findings:
 - HTTP 200 confirmed on both Desktop and Browser React artifacts
 - Model used: `claude-sonnet-4-5-20250929`
-- New response fields in v1.4: `cache_creation` object (with `ephemeral_5m` and `ephemeral_1h` fields), `service_tier`, `inference_geo`
+- New response fields in v1.4: `cache_creation` object (with `ephemeral_5m` and `ephemeral_1h` fields), `service_tier`, `inference_geo` — these are standard Anthropic API response fields, not artifact-specific
 - Controlled by the "AI-powered artifacts" toggle in Settings → Capabilities
+
+**Update (April 2026):** Anthropic has since officially documented this capability as "AI-powered artifacts" in their help center. The mechanics match our reverse-engineering findings: artifacts call Claude via an internal API, authentication is injected by the runtime, no API keys are needed, and usage is billed to the end user's subscription. This feature is available on Free, Pro, Max, Team, and Enterprise plans.
 
 #### `persistent_storage` (`window.storage`)
 
-> **⚠️ CRITICAL: SESSION-SCOPED ONLY — The name "persistent_storage" is misleading.** Data stored via `window.storage` is available within a single chat session (across artifact re-renders) but is **destroyed when the session closes**. Attempting to retrieve data in a new chat returns: "Internal server error while processing action." This is NOT cross-session persistence. Project context makes no difference — storage is session-scoped regardless.
+> **Update (April 2026):** Anthropic now officially documents `persistent_storage` as true cross-session persistent storage for **published** artifacts on Pro, Max, Team, and Enterprise plans. Two modes: personal (per-user, private) and shared (all users see same data). 20 MB limit per artifact, text-only. Storage only activates after the artifact is published — during development, storage calls succeed in-session but do not persist. Unpublishing permanently deletes all storage data. Our v1.4 testing on unpublished artifacts correctly observed session-scoped behavior.
 
-React artifacts have access to a `window.storage` object with four methods: `get`, `set`, `delete`, `list`. The backend uses gRPC/protobuf (`StorageSetResponse`/`StorageGetResponse`). Storage supports two scopes: personal (`shared=false`) and shared (`shared=true`). Maximum size is 5MB per key.
+React artifacts have access to a `window.storage` object with four methods: `get`, `set`, `delete`, `list`. The backend uses gRPC/protobuf (`StorageSetResponse`/`StorageGetResponse`). Storage supports two scopes: personal (`shared=false`) and shared (`shared=true`). Maximum 20 MB per artifact.
 
-**Platform:** Desktop App and Browser (React artifacts only — `window.storage` is `undefined` in HTML artifacts).
+**Platform:** Desktop App and Browser (React artifacts only — `window.storage` is `undefined` in HTML artifacts). Requires Pro, Max, Team, or Enterprise plan for cross-session persistence.
 
 #### MCP Endpoints in Artifacts (v1.4)
 
 React artifacts can access MCP connector endpoints — specifically Google Calendar and Gmail. This means an artifact can read calendar events or create email drafts, extending the artifact execution layer beyond simple display into service integration.
+
+**Update (April 2026):** Anthropic now officially documents MCP integration for artifacts on Pro, Max, Team, and Enterprise plans (web and desktop). Artifacts can connect to external services through configured MCP servers (both Anthropic-provided and custom). Each user must independently authenticate MCP servers before an artifact can access them.
 
 #### Mobile Capability Cliff (v1.4)
 
@@ -1072,7 +1076,7 @@ This chapter provides a quick-reference index to every documented tool. For full
 | `visualize:show_widget` | Visualization | Inline Chart.js widgets (desktop/browser) | [34](#tool-card-34) |
 | `gmail_create_draft` | Email | Creates Gmail drafts via MCP connector | [35](#tool-card-35) |
 | `anthropic_api_in_artifacts` | Artifact | Claude API calls from within artifacts | [36](#tool-card-36) |
-| `persistent_storage` | Artifact | Session-scoped key-value storage in artifacts | [37](#tool-card-37) |
+| `persistent_storage` | Artifact | Persistent key-value storage in published artifacts | [37](#tool-card-37) |
 
 ---
 
@@ -1105,7 +1109,7 @@ These "ghost tools" suggest Anthropic's roadmap includes deeper Gmail integratio
 
 ### The Artifact Layer as an Emerging Platform
 
-v1.4 reveals that artifacts are evolving beyond display surfaces into a full execution platform. With `anthropic_api_in_artifacts` (Claude-in-Claude), `persistent_storage` (session-scoped data), and MCP endpoint access (Calendar, Gmail), React artifacts can now function as lightweight applications. This represents a potential convergence point: rather than adding more consumer tools, Anthropic may invest in making the artifact layer powerful enough to replace them.
+v1.4 reveals that artifacts are evolving beyond display surfaces into a full execution platform. With `anthropic_api_in_artifacts` (Claude-in-Claude), `persistent_storage` (cross-session persistent data for published artifacts), and MCP endpoint access (Calendar, Gmail, and custom servers), React artifacts can now function as lightweight applications. As of April 2026, Anthropic has officially documented all three capabilities. This represents a potential convergence point: rather than adding more consumer tools, Anthropic may invest in making the artifact layer powerful enough to replace them.
 
 ### Open Questions
 
@@ -3630,19 +3634,21 @@ Creates a Gmail draft via the MCP Gmail connector. The only write tool in the of
 | Params | N/A (code-level API) |
 | Permission | "AI-powered artifacts" toggle required |
 | Platform | Desktop + Browser (React artifacts only) |
-| Docs | None |
+| Docs | [Anthropic: What are Artifacts](https://support.claude.com/en/articles/9487310-what-are-artifacts-and-how-do-i-use-them) |
 | Trigger phrases | "Create an AI chatbot artifact" · "Make a Claude-powered tool" |
 
 #### Overview
 
 React artifacts can call the Anthropic API directly without an API key. The runtime injects authentication at the infrastructure level. This enables "Claude-in-Claude" patterns — artifacts that contain working AI chatbots, content generators, or analysis tools. See Chapter 9.
 
+**Official status:** As of April 2026, Anthropic documents this as "AI-powered artifacts" in their help center. Our reverse-engineering findings preceded the official documentation and are consistent with it. Usage is billed to the end user's subscription. Available on Free, Pro, Max, Team, and Enterprise plans.
+
 #### Key Findings
 
 - HTTP 200 confirmed on both Desktop and Browser React artifacts
 - Model: `claude-sonnet-4-5-20250929`
 - HTML artifacts blocked by CSP (`TypeError: Failed to fetch`)
-- Response includes: `cache_creation` object (`ephemeral_5m`, `ephemeral_1h`), `service_tier`, `inference_geo`
+- Response includes: `cache_creation` object (`ephemeral_5m`, `ephemeral_1h`), `service_tier`, `inference_geo` — these are **standard Anthropic API response fields**, not artifact-specific (they appear throughout Claude Code's source in standard API usage tracking)
 - Controlled by "AI-powered artifacts" toggle in Settings → Capabilities
 
 > **v1.4 correction:** v1.3 implied this was Desktop-only. It works on Browser React artifacts too.
@@ -3669,14 +3675,16 @@ React artifacts can call the Anthropic API directly without an API key. The runt
 | Version | N/A (artifact capability) |
 | Category | Artifact |
 | Params | N/A (code-level API) |
-| Permission | No |
+| Permission | No (Pro/Max/Team/Enterprise for cross-session persistence) |
 | Platform | Desktop + Browser (React artifacts only) |
-| Docs | None |
+| Docs | [Anthropic: What are Artifacts](https://support.claude.com/en/articles/9487310-what-are-artifacts-and-how-do-i-use-them) |
 | Trigger phrases | N/A — used within artifact code |
 
 #### Overview
 
-> **⚠️ CRITICAL: SESSION-SCOPED ONLY.** Despite the name "persistent_storage," data does **not** persist across sessions. Data stored via `window.storage` is available within a single chat session (across artifact re-renders) but is **destroyed when the session closes**. Attempting to retrieve data in a new chat returns: "Internal server error while processing action." Project context makes no difference — storage is session-scoped regardless.
+Persistent key-value storage for published artifacts. Two modes: personal (`shared=false`, per-user, private) and shared (`shared=true`, all users see same data). Available on Pro, Max, Team, and Enterprise plans on web and desktop. 20 MB limit per artifact, text-only data. Storage only activates after the artifact is published — during development and testing, storage operations succeed in-session but do not persist across sessions. Unpublishing permanently deletes all storage data.
+
+**Testing note:** v1.4 testing was conducted on unpublished artifacts, which correctly showed session-scoped behavior. Anthropic's updated documentation (April 2026) confirms published artifacts have true cross-session persistent storage.
 
 React artifacts have access to a `window.storage` object with four methods:
 
@@ -3691,20 +3699,20 @@ The `shared` parameter controls scope: `false` for personal storage, `true` for 
 
 #### Watch Out
 
-- **⚠️ SESSION-SCOPED ONLY** — the name "persistent_storage" is misleading. Data is destroyed on session close
+- **Publish-gated persistence** — storage calls work in-session during development but do NOT persist until the artifact is published. This is the most common source of "storage doesn't work" reports
+- **Unpublish = permanent deletion** — unpublishing an artifact permanently deletes ALL associated storage (personal + shared). Cannot re-publish after unpublishing
+- **20 MB per artifact** — text-only, no binary/file uploads
+- **Personal vs shared** — creators choose storage mode per key; shared storage makes data visible to all users of the artifact
 - **React artifacts only** — `window.storage` is `undefined` in HTML artifacts
-- Cross-session GET returns "Internal server error while processing action"
-- Project context does NOT make storage project-scoped — still session-scoped
-- Personal (`shared=false`) and shared (`shared=true`) scopes available
-- 5MB per key limit
+- **Plan requirement** — persistent storage requires Pro, Max, Team, or Enterprise plan (web and desktop only)
 
 #### Platform Availability
 
 | Platform | Available | Notes |
 | --- | --- | --- |
-| Claude.ai (web) | ✅ | React artifacts only, session-scoped |
+| Claude.ai (web) | ✅ | React artifacts only. Persistent for published artifacts (Pro/Max/Team/Enterprise) |
 | Claude mobile | ❌ | |
-| Claude desktop | ✅ | React artifacts only, session-scoped |
+| Claude desktop | ✅ | React artifacts only. Persistent for published artifacts (Pro/Max/Team/Enterprise) |
 | Anthropic API | ❌ | |
 | Claude Code | ❌ | |
 
